@@ -1,0 +1,8 @@
+name = Tableau WorldServer Integration
+description = Performs FTP syncing of XLIFFs between WorldServer and Drupal
+package = "Tableau"
+core = 7.x
+version = 7.x-1.0
+
+dependencies[] = entity_xliff
+dependencies[] = composer_manager

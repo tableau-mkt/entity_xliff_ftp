@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for the Tableau WorldServer Integration module.
+ */
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function tableau_worldserver_integration_uninstall() {
+  $vars = array(
+    'tableau_worldserver_integration_sftp_host',
+    'tableau_worldserver_integration_sftp_un',
+    'tableau_worldserver_integration_sftp_pw',
+  );
+
+  foreach ($vars as $var) {
+    variable_del($var);
+  }
+}

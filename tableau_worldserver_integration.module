@@ -1,0 +1,86 @@
+<?php
+
+/**
+ * @file
+ * Module hooks and functions for the Tableau WorldServer Integration module.
+ */
+
+use TableauWorldServer\MiddleWare;
+
+
+/**
+ * Implements hook_menu().
+ */
+function tableau_worldserver_integration_menu() {
+  return array(
+    'admin/config/services/world-server' => array(
+      'title' => 'WorldServer Integration',
+      'description' => 'Configure SFTP credentials and other goodies for connecting with WorldServer.',
+      'type' => MENU_NORMAL_ITEM,
+      'file' => 'inc/admin.inc',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('tableau_worldserver_integration_settings'),
+      'access arguments' => array('administer entity xliff'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function tableau_worldserver_integration_form_entity_xliff_actions_alter(&$form, &$form_state) {
+  module_load_include('inc', 'tableau_worldserver_integration', 'inc/admin');
+  _tableau_worldserver_integration_form_entity_xliff_actions_alter($form, $form_state);
+}
+
+/**
+ * Returns an authenticated phpseclib SFTP client or NULL on failure.
+ *
+ * @return Net_SFTP|null
+ *   An authenticated Net_SFTP instance or NULL on failure.
+ */
+function tableau_worldserver_integration_sftp_client() {
+  $client = &drupal_static(__FUNCTION__, FALSE);
+
+  if ($client === FALSE) {
+    $host = variable_get('tableau_worldserver_integration_sftp_host', FALSE);
+    $un = variable_get('tableau_worldserver_integration_sftp_un', FALSE);
+    $pw = variable_get('tableau_worldserver_integration_sftp_pw', FALSE);
+
+    if ($host && $un && $pw) {
+      $client = new Net_SFTP($host);
+      if (!$client->login($un, $pw)) {
+        $client = NULL;
+      }
+    }
+    else {
+      $client = NULL;
+    }
+  }
+
+  return $client;
+}
+
+/**
+ * Generates XLIFFs for the specified entity in the specified languages, then
+ * pushes those files up to WorldServer.
+ *
+ * @param string $type
+ *   The type of entity.
+ *
+ * @param mixed $entity
+ *   The entity (or entity ID) to push.
+ *
+ * @param object[] $langs
+ *   (optional) An associative array of Drupal language objects, keyed by
+ *   language. If nothing is provided, all installed languages will be assumed.
+ */
+function tableau_worldserver_integration_put_entity_xliffs($type, $entity, $langs = array()) {
+  if ($client = tableau_worldserver_integration_sftp_client()) {
+    $wrapper = entity_metadata_wrapper($type, $entity);
+
+    // Get the middleware provider and push up configured files.
+    $middleware = new MiddleWare($client, $wrapper);
+    $middleware->putXliffs($langs);
+  }
+}
