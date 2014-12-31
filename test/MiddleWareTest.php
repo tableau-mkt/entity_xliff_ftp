@@ -9,7 +9,7 @@ namespace TableauWorldServer\Tests {
     /**
      * Tests that the MiddleWare constructor will throw an exception in the case
      * that an SFTP client is passed in that is not connected / logged in.
-     * 
+     *
      * @test
      * @expectedException \Exception
      * @expectedExceptionMessage The provided SFTP client must already be connected.

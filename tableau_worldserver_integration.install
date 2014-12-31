@@ -14,6 +14,7 @@ function tableau_worldserver_integration_uninstall() {
     'tableau_worldserver_integration_sftp_host',
     'tableau_worldserver_integration_sftp_un',
     'tableau_worldserver_integration_sftp_pw',
+    'tableau_worldserver_integration_target_root',
   );
 
   foreach ($vars as $var) {
