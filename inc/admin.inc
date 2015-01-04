@@ -94,8 +94,6 @@ function _tableau_worldserver_integration_form_entity_xliff_actions_alter(&$form
     '#value' => t('Push to WorldServer'),
     '#submit' => array('tableau_worldserver_integration_push_xliffs'),
   );
-
-  #echo '<pre>'; print_r($form); die();
 }
 
 /**

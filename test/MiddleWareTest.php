@@ -246,28 +246,30 @@ namespace TableauWorldServer\Tests {
      */
     public function getXliff() {
       $expectedLang = 'fr-fr';
+      $expectedTranslatable = $this->getMock('EggsCereal\Interfaces\TranslatableInterface');
       $mockClient = $this->getConnectedClientMock();
       $mockWrapper = $this->getWrapperMock(array('raw', 'getIdentifier', 'getPropertyInfo', 'type'));
-
-      // @todo Remove/update once we're more entity-type agnostic.
-      $mockWrapper->expects($this->any())
-        ->method('getPropertyInfo')
-        ->willReturn(array());
-      $mockWrapper->language = $this->getMock('stdClass', array('value'));
 
       // Set up an observer on the serializer.
       $observerSerializer = $this->getMockBuilder('EggsCereal\Serializer')
         ->setMethods(array('serialize'))
         ->getMock();
 
+      // Set up an observer on the DrupalHandler.
+      $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+
+      // We expect the entityXliffGetTranslatable method to be called.
+      $observerDrupal->expects($this->once())
+        ->method('entityXliffGetTranslatable')
+        ->with($this->equalTo($mockWrapper))
+        ->willReturn($expectedTranslatable);
+
+      // We expect the Serializer::serialize method to be called.
       $observerSerializer->expects($this->once())
         ->method('serialize')
-        ->with(
-          $this->isInstanceOf('EggsCereal\Interfaces\TranslatableInterface'),
-          $this->equalTo($expectedLang)
-        );
+        ->with($this->equalTo($expectedTranslatable), $this->equalTo($expectedLang));
 
-      $middleware = new MiddleWare($mockClient, $mockWrapper, $observerSerializer);
+      $middleware = new MiddleWare($mockClient, $mockWrapper, $observerSerializer, $observerDrupal);
       $middleware->getXliff($expectedLang);
     }
 
@@ -342,17 +344,4 @@ namespace TableauWorldServer\Tests {
       );
     }
   }
-}
-
-/**
- * Most of this need comes from EntityXliff weirdness... @todo Remove.
- */
-namespace {
-  $GLOBALS['user'] = (object) array();
-  function entity_get_info() {}
-  function drupal_static_reset() {}
-  function node_load() {return (object) array('tnid' => 0);}
-  function drupal_save_session() {}
-  function user_load() {return $GLOBALS['user'];}
-  function translation_node_get_translations() {}
 }

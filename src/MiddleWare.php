@@ -8,7 +8,6 @@
 namespace TableauWorldServer;
 
 use EggsCereal\Serializer;
-use EntityXliff\Drupal\Translatable\NodeTranslatable;
 use TableauWorldServer\Utils\DrupalHandler;
 
 
@@ -150,11 +149,9 @@ class MiddleWare {
    *
    * @return string
    *   XLIFF representing the given Entity wrapper.
-   *
-   * @todo Don't hard-code NodeTranslatable.
    */
   public function getXliff($targetLang) {
-    $translatable = new NodeTranslatable($this->wrapper);
+    $translatable = $this->drupal->entityXliffGetTranslatable($this->wrapper);
     return $this->serializer->serialize($translatable, $targetLang);
   }
 

@@ -12,6 +12,15 @@ namespace TableauWorldServer\Utils;
 class DrupalHandler {
 
   /**
+   * Gets a TranslatableInterface instance given an entity wrapper.
+   * @param \EntityDrupalWrapper $wrapper
+   * @return \EggsCereal\Interfaces\TranslatableInterface|null
+   */
+  public function entityXliffGetTranslatable($wrapper) {
+    return entity_xliff_get_translatable($wrapper);
+  }
+
+  /**
    * Returns a persistent variable.
    *
    * @param string $name
