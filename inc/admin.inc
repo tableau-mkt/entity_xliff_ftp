@@ -52,6 +52,14 @@ function tableau_worldserver_integration_settings($form, &$form_state) {
     '#default_value' => variable_get('tableau_worldserver_integration_target_root', ''),
   );
 
+  $form['sftp_details']['tableau_worldserver_integration_source_root'] = array(
+    '#title' => t('XLIFF source root path'),
+    '#description' => t('Used as the root directory when pulling XLIFFs from WorldServer.'),
+    '#type' => 'textfield',
+    '#required' => TRUE,
+    '#default_value' => variable_get('tableau_worldserver_integration_source_root', ''),
+  );
+
   return system_settings_form($form);
 }
 
