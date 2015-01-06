@@ -6,6 +6,7 @@
  */
 
 use TableauWorldServer\MiddleWare;
+use TableauWorldServer\Querier;
 
 
 /**
@@ -62,6 +63,52 @@ function tableau_worldserver_integration_sftp_client() {
 }
 
 /**
+ * Returns an instance of our MiddleWare class for a given entity. The same
+ * MiddleWare instance will be returned throughout the request lifecycle.
+ *
+ * @param \EntityDrupalWrapper $wrapper
+ * @return MiddleWare|bool
+ */
+function tableau_worldserver_integration_get_middleware(\EntityDrupalWrapper $wrapper) {
+  $middleware = &drupal_static(__FUNCTION__, array());
+  $key = $wrapper->type() . ':' . $wrapper->getIdentifier();
+
+  if (!array_key_exists($key, $middleware)) {
+    if ($client = tableau_worldserver_integration_sftp_client()) {
+      $middleware[$key] = new MiddleWare($client, $wrapper);
+    }
+    else {
+      $middleware[$key] = FALSE;
+    }
+  }
+
+  return $middleware[$key];
+}
+
+/**
+ * Returns a list of content that has been translated in WorldServer that is
+ * ready for processing in Drupal.
+ *
+ * @param object[] $langs
+ *   (optional) An associative array of Drupal language objects, keyed by
+ *   language. If nothing is provided, all installed languages will be assumed.
+ *
+ * @return array
+ *   A multidimensional array of the following form:
+ *   - [drupal_language]: The Drupal language identifier.
+ *     - [entity_type]: An array of entity IDs to be processed, keyed by the
+ *       type of entity.
+ */
+function tableau_worldserver_integration_get_processable(array $langs = array()) {
+  $response = array();
+  if ($client = tableau_worldserver_integration_sftp_client()) {
+    $query = new Querier($client);
+    $response = $query->getProcessableByEntity($langs);
+  }
+  return $response;
+}
+
+/**
  * Generates XLIFFs for the specified entity in the specified languages, then
  * pushes those files up to WorldServer.
  *
@@ -76,11 +123,30 @@ function tableau_worldserver_integration_sftp_client() {
  *   language. If nothing is provided, all installed languages will be assumed.
  */
 function tableau_worldserver_integration_put_entity_xliffs($type, $entity, $langs = array()) {
-  if ($client = tableau_worldserver_integration_sftp_client()) {
-    $wrapper = entity_metadata_wrapper($type, $entity);
-
+  $wrapper = entity_metadata_wrapper($type, $entity);
+  if ($middleware = tableau_worldserver_integration_get_middleware($wrapper)) {
     // Get the middleware provider and push up configured files.
-    $middleware = new MiddleWare($client, $wrapper);
     $middleware->putXliffs($langs);
+  }
+}
+
+/**
+ * Loads translated/processed XLIFF data from Worldserver, unserializes the
+ * data against the wrapped entity, and saves all relevant entities.
+ *
+ * @param string $type
+ *   The type of entity.
+ *
+ * @param mixed $entity
+ *   The entity (or entity ID) to push.
+ *
+ * @param object[] $langs
+ *   (optional) An associative array of Drupal language objects, keyed by
+ *   language. If nothing is provided, all installed languages will be assumed.
+ */
+function tableau_worldserver_integration_set_entity_xliffs($type, $entity, $langs = array()) {
+  $wrapper = entity_metadata_wrapper($type, $entity);
+  if ($middleware = tableau_worldserver_integration_get_middleware($wrapper)) {
+    $middleware->setXliffs($langs);
   }
 }
