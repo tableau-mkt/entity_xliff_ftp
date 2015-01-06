@@ -101,8 +101,10 @@ class Querier {
   public function getProcessableByEntity(array $langs = array()) {
     $response = array();
     foreach ($this->getProcessable($langs) as $lang => $langEntity) {
-      foreach ($langEntity as $entityType => $entity) {
-        $response[$entityType][key($entity)][$lang] = $lang;
+      foreach ($langEntity as $entityType => $entities) {
+        foreach ($entities as $entityId => $entity) {
+          $response[$entityType][$entityId][$lang] = $lang;
+        }
       }
     }
     return $response;
@@ -153,9 +155,10 @@ class Querier {
   public function getProcessedByEntity(array $langs = array()) {
     $response = array();
     foreach ($this->getProcessed($langs) as $lang => $langEntity) {
-      foreach ($langEntity as $entityType => $fileData) {
-        $entityId = key($fileData);
-        $response[$entityType][$entityId][$lang] = $fileData[$entityId];
+      foreach ($langEntity as $entityType => $entities) {
+        foreach ($entities as $entityId => $fileData) {
+          $response[$entityType][$entityId][$lang] = $fileData;
+        }
       }
     }
     return $response;
