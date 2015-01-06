@@ -195,13 +195,13 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
         'filename' => 'node-1.xlf',
         'size' => 12345,
         'modified' => 98765,
-        'created' => 43210,
+        'accessed' => 43210,
       ))),
       'de' => array('node' => array(1 => array(
         'filename' => 'node-1.xlf',
         'size' => 12345,
         'modified' => 98765,
-        'created' => 43210,
+        'accessed' => 43210,
       ))),
     );
 
@@ -247,13 +247,13 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
             'filename' => 'node-1.xlf',
             'size' => 12345,
             'modified' => 98765,
-            'created' => 43210,
+            'accessed' => 43210,
           ),
           'de' => array(
             'filename' => 'node-1.xlf',
             'size' => 12345,
             'modified' => 98765,
-            'created' => 43210,
+            'accessed' => 43210,
           ),
         )));
 
@@ -271,13 +271,13 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
           'filename' => 'node-1.xlf',
           'size' => 12345,
           'modified' => 98765,
-          'created' => 43210,
+          'accessed' => 43210,
         ))),
         'de' => array('node' => array(1 => array(
           'filename' => 'node-1.xlf',
           'size' => 12345,
           'modified' => 98765,
-          'created' => 43210,
+          'accessed' => 43210,
         ))),
       ));
 
