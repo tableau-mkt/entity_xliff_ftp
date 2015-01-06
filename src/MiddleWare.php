@@ -39,6 +39,11 @@ class MiddleWare {
   CONST TARGETROOTVAR = 'tableau_worldserver_integration_target_root';
 
   /**
+   * Describes the Drupal variable name representing the source root.
+   */
+  CONST SOURCEROOTVAR = 'tableau_worldserver_integration_source_root';
+
+  /**
    * @param \Net_SFTP $client
    *   An SFTP client, already logged in.
    *
@@ -142,6 +147,91 @@ class MiddleWare {
   }
 
   /**
+   * Reads translated/processed XLIFF data from Worldserver, unserializes the
+   * data against the wrapped entity, and saves all relevant entities.
+   *
+   * @param object[] $langs
+   *   An associative array of Drupal language objects, keyed by their language
+   *   shortcode. Should match the output of language_list().
+   */
+  public function setXliffs(array $langs = array()) {
+    // If no languages were provided, load them dynamically.
+    if ($langs === array()) {
+      $langs = $this->drupal->languageList('language');
+    }
+
+    // Unset English. @todo Don't be so English-centric.
+    unset($langs['en']);
+
+    // Iterate through all languages, generate XLIFF data, and put those files.
+    foreach ($langs as $targetLang => $lang) {
+      if ($this->setXliff($this->getProcessedXliff($targetLang), $targetLang)) {
+        $this->drupal->setMessage($this->drupal->t('Successfully processed @language translation for @type %label from WorldServer.', array(
+          '@language' => $lang->name,
+          '@type' => $this->wrapper->type(),
+          '%label' => $this->wrapper->label(),
+        )), 'status');
+      }
+    }
+  }
+
+  /**
+   * Sets and saves translated data on the wrapped entity given a target
+   * language and xliff data (as a string).
+   *
+   * @param string $xlfData
+   *   Translated/processed xliff contents as a string.
+   *
+   * @param string $targetLang
+   *   The target language (Drupal language identifier).
+   *
+   * @return bool
+   *   TRUE on success, false on failure.
+   */
+  public function setXliff($xlfData, $targetLang) {
+    if ($translatable = $this->drupal->entityXliffGetTranslatable($this->wrapper)) {
+      if ($this->serializer->unserialize($translatable, $targetLang, $xlfData)) {
+        return $this->setProcessed($targetLang);
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * @param string $language
+   */
+  public function getProcessedXliff($language) {
+    if ($sourceDir = $this->drupal->variableGet(self::SOURCEROOTVAR, FALSE)) {
+      $languagePath = $this->getLanguagePathPartSource($language);
+      $targetFile = implode('/', array($sourceDir, $languagePath, $this->getFilename()));
+      $result = $this->client->get($targetFile);
+    }
+    else {
+      $result = FALSE;
+      $this->drupal->setMessage($this->drupal->t('No source directory is configured.'), 'error');
+    }
+
+    return $result;
+  }
+
+  /**
+   * Marks a given language as processed for this wrapped entity.
+   *
+   * @param string $language
+   *   The Drupal language to mark as processed (e.g. language identifier).
+   *
+   * @return bool
+   *   Returns TRUE on success, FALSE on failure.
+   */
+  public function setProcessed($language) {
+    $root = $this->drupal->variableGet(self::SOURCEROOTVAR);
+    $root .= '/' . $this->getLanguagePathPartSource($language);
+    $fromFile = $root . '/' . $this->getFilename();
+    $toFile = $root . '/processed/' . $this->getFilename();
+    return $this->client->rename($fromFile, $toFile);
+  }
+
+  /**
    * Returns XLIFF for a given Entity wrapper and target language.
    *
    * @param string $targetLang
@@ -160,9 +250,32 @@ class MiddleWare {
    *
    * @return string
    *   Returns the file name for the given entity/wrapper.
+   *
+   * @see Querier::parseFilename()
    */
   public function getFilename() {
     return $this->wrapper->type() . '-' . $this->wrapper->getIdentifier() . '.xlf';
+  }
+
+  /**
+   * @param string $language
+   */
+  public function getLanguagePathPartTarget($language) {
+    $languages = $this->drupal->languageList('language');
+    $language = $languages[$language];
+    $prefix = $language->prefix;
+    $langPathSuffix = substr($prefix, 0, -2) . strtoupper(substr($prefix, -2, 2 ));
+    return 'en-US_to_' . $langPathSuffix;
+  }
+
+  /**
+   * @param string $language
+   */
+  public function getLanguagePathPartSource($language) {
+    $languages = $this->drupal->languageList('language');
+    $language = $languages[$language];
+    $prefix = $language->prefix;
+    return substr($prefix, 0, -2) . strtoupper(substr($prefix, -2, 2 ));
   }
 
 }
