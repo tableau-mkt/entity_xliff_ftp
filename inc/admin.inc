@@ -167,7 +167,7 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
     );
   }
   else {
-    $form['pending_overview']['no_table'] = array(
+    $form['pending_overview']['table'] = array(
       '#type' => 'markup',
       '#markup' => '<p><em>' . t('There are no pending projects at this time.') . '</em></p>',
     );
@@ -178,6 +178,7 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
     '#value' => t('Process selected projects'),
     '#submit' => array('tableau_worldserver_integration_overview_process_submit'),
     // Disabled by default. Enabled when any one processable item is checked.
+    '#disabled' => count($rows) <= 0,
     '#states' => array(
       'enabled' => array(
         ':input[name^="processable"]' => array('checked' => TRUE),
@@ -234,7 +235,7 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
     );
   }
   else {
-    $form['pending_overview']['no_table'] = array(
+    $form['processed_overview']['table'] = array(
       '#type' => 'markup',
       '#markup' => '<p><em>' . t('There are no processed projects at this time.') . '</em></p>',
     );
