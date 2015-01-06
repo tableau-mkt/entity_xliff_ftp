@@ -142,7 +142,7 @@ class Querier {
           $response[$targetLang][$entity['type']][$entity['identifier']] = array(
             'filename' => $attrs['filename'],
             'size' => $attrs['size'],
-            'created' => $attrs['atime'],
+            'accessed' => $attrs['atime'],
             'modified' => $attrs['mtime'],
           );
         }

@@ -228,6 +228,7 @@ class MiddleWare {
     $root .= '/' . $this->getLanguagePathPartSource($language);
     $fromFile = $root . '/' . $this->getFilename();
     $toFile = $root . '/processed/' . $this->getFilename();
+    $this->client->touch($fromFile);
     return $this->client->rename($fromFile, $toFile);
   }
 

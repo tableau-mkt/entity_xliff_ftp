@@ -193,7 +193,7 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
   $form['processed_overview'] = array(
     '#type' => 'fieldset',
     '#title' => t('Processed projects'),
-    '#description' => t('An overview of processed WorldServer/Drupal XLIFFs.'),
+    '#description' => t('An overview of recently processed WorldServer/Drupal XLIFFs.'),
     '#group' => 'project_overview',
   );
 
@@ -201,7 +201,7 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
   $form_state['storage']['processed'] = tableau_worldserver_integration_get_processed();
 
   // Prepare the table.
-  $header = array(t('Label'), t('Language'), t('Created'), t('Processed'));
+  $header = array(t('Label'), t('Language'), t('Processed'));
   $rows = array();
 
   foreach ($form_state['storage']['processed'] as $entityType => $entityDetails) {
@@ -210,21 +210,20 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
         $entity = entity_load_single($entityType, $entityId);
         $wrapper = entity_metadata_wrapper($entityType, $entity);
         $uri = entity_uri($entityType, $entity);
-        $created = new DateObject($fileDetails['created']);
-        $processed = new DateObject($fileDetails['modified']);
+        $processed = new DateObject($fileDetails['accessed']);
 
-        $rows[$fileDetails['modified']] = array(
+        $rows[$fileDetails['accessed'] . '-' . $wrapper->label()] = array(
           'label' => l($wrapper->label(), $uri['path'], $uri['options']),
           'language' => $languages[$language]->name,
-          'created' => date_format_date($created),
           'processed' => date_format_date($processed),
         );
       }
     }
   }
 
-  // Latest ones first.
+  // Latest ones first, only the latest 50 though.
   krsort($rows);
+  $rows = array_slice($rows, 0, 50);
 
   // Add the table to be rendered.
   if (count($rows)) {
