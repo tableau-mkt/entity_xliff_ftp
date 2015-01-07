@@ -36,6 +36,53 @@ function tableau_worldserver_integration_menu() {
 }
 
 /**
+ * Implements hook_cron().
+ */
+function tableau_worldserver_integration_cron() {
+  $entitiesProcessed = 0;
+  $xliffsProcessed = 0;
+
+  if ($processable = tableau_worldserver_integration_get_processable()) {
+    $languages = language_list();
+    foreach ($processable as $entityType => $entities) {
+      foreach ($entities as $entityId => $langs) {
+        // Map known langs to Drupal language objects.
+        $processLangs = array_map(function($lang) use ($languages) {
+          return $languages[$lang];
+        }, $langs);
+
+        // Process the XLIFFs.
+        try {
+          tableau_worldserver_integration_set_entity_xliffs($entityType, $entityId, $processLangs);
+          $entitiesProcessed++;
+          $xliffsProcessed += count($processLangs);
+        }
+        catch (Exception $e) {
+          // If the process caused an exception, catch it and log it.
+          watchdog('tableau worldserver integration', 'There was a problem processing XLIFFs from WorldServer for @entity_type @id. Message: !message', array(
+            '@entity_type' => $entityType,
+            '@id' => $entityId,
+            '!message' => $e->getMessage(),
+          ), WATCHDOG_ERROR);
+        }
+      }
+    }
+  }
+
+  // If we processed any entity xliff imports, add a notice.
+  if ($entitiesProcessed > 0) {
+    // Watchdog notice for logging / Insights.
+    watchdog('tableau worldserver integration', 'Successfully processed !xliff_count XLIFF files across !entity_count entities.', array(
+      '!xliff_count' => $xliffsProcessed,
+      '!entity_count' => $entitiesProcessed,
+    ), WATCHDOG_NOTICE);
+
+    // Set this variable. Used in admin UI on overview page.
+    variable_set('tableau_worldserver_integration_last_processed', REQUEST_TIME);
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function tableau_worldserver_integration_form_entity_xliff_actions_alter(&$form, &$form_state) {

@@ -240,6 +240,13 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
     );
   }
 
+  // Add a message that indicates when processing last occurred.
+  $lastProcessed = variable_get('tableau_worldserver_integration_last_processed', 0);
+  $lastProcessed = new DateObject($lastProcessed);
+  $form['processed_overview']['table']['#prefix'] = '<p>' . t('Processing last occurred @date.', array(
+      '@date' => date_format_date($lastProcessed),
+    )) . '</p>';
+
   return $form;
 }
 
@@ -257,6 +264,7 @@ function tableau_worldserver_integration_overview_process_submit($form, &$form_s
         tableau_worldserver_integration_set_entity_xliffs($entityType, $entityId, $targetLangs);
       }
     }
+    variable_set('tableau_worldserver_integration_last_processed', REQUEST_TIME);
   }
 }
 
