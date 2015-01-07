@@ -44,6 +44,11 @@ class MiddleWare {
   CONST SOURCEROOTVAR = 'tableau_worldserver_integration_source_root';
 
   /**
+   * Describes the Drupal variable name representing the file prefix.
+   */
+  CONST FILEPREFIXVAR = 'tableau_worldserver_integration_file_prefix';
+
+  /**
    * @param \Net_SFTP $client
    *   An SFTP client, already logged in.
    *
@@ -262,7 +267,10 @@ class MiddleWare {
    * @see Querier::parseFilename()
    */
   public function getFilename() {
-    return $this->wrapper->type() . '-' . $this->wrapper->getIdentifier() . '.xlf';
+    $prefix = $this->drupal->variableGet(self::FILEPREFIXVAR, '');
+    $type = $this->wrapper->type();
+    $id = $this->wrapper->getIdentifier();
+    return implode('-', array($prefix, $type, $id)) . '.xlf';
   }
 
   /**

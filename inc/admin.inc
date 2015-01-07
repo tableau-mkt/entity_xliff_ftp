@@ -60,6 +60,14 @@ function tableau_worldserver_integration_settings($form, &$form_state) {
     '#default_value' => variable_get('tableau_worldserver_integration_source_root', ''),
   );
 
+  $form['sftp_details']['tableau_worldserver_integration_file_prefix'] = array(
+    '#title' => t('XLIFF file prefix'),
+    '#description' => t('Used to uniquely identify this Drupal instance from other Drupal instances when sharing the same FTP source/target roots. Note: this value should not be changed while projects are still pending.'),
+    '#type' => 'textfield',
+    '#required' => TRUE,
+    '#default_value' => variable_get('tableau_worldserver_integration_file_prefix', ''),
+  );
+
   return system_settings_form($form);
 }
 

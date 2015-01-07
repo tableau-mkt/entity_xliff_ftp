@@ -18,6 +18,11 @@ class Querier {
   CONST SOURCEROOTVAR = 'tableau_worldserver_integration_source_root';
 
   /**
+   * Describes the Drupal variable name representing the file prefix.
+   */
+  CONST FILEPREFIXVAR = 'tableau_worldserver_integration_file_prefix';
+
+  /**
    * @var \Net_SFTP
    */
   protected $client;
@@ -179,7 +184,8 @@ class Querier {
    * @see MiddleWare::getFilename()
    */
   public function parseFilename($filename) {
-    if (preg_match('/^([a-zA-Z_]+)-(\d+)\.xlf$/', $filename, $matches)) {
+    $prefix = preg_quote($this->drupal->variableGet(self::FILEPREFIXVAR, ''));
+    if (preg_match('/^' . $prefix . '-([a-zA-Z_]+)-(\d+)\.xlf$/', $filename, $matches)) {
       return array(
         'type' => $matches[1],
         'identifier' => $matches[2],

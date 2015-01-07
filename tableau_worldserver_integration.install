@@ -7,6 +7,15 @@
 
 
 /**
+ * Implements hook_install().
+ */
+function tableau_worldserver_integration_install() {
+  // Initialize the file prefix with a unique enough value.
+  $uniqueEnough = uniqid('drupal-');
+  variable_set('tableau_worldserver_integration_file_prefix', $uniqueEnough);
+}
+
+/**
  * Implements hook_uninstall().
  */
 function tableau_worldserver_integration_uninstall() {
@@ -17,6 +26,7 @@ function tableau_worldserver_integration_uninstall() {
     'tableau_worldserver_integration_target_root',
     'tableau_worldserver_integration_source_root',
     'tableau_worldserver_integration_last_processed',
+    'tableau_worldserver_integration_file_prefix',
   );
 
   foreach ($vars as $var) {
