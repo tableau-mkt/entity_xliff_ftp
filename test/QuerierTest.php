@@ -18,8 +18,20 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     $mockClient = $this->getMockBuilder('Net_SFTP')
       ->disableOriginalConstructor()
       ->getMock();
-
     $querier = new Querier($mockClient);
+  }
+
+  /**
+   * Tests that optional injected dependencies are dynamically instantiated if
+   * not initially provided.
+   *
+   * @test
+   */
+  public function constructorInstantiatesDefault() {
+    $mockClient = $this->getConnectedClientMock();
+    $querier = new Querier($mockClient);
+    $props = get_object_vars($querier);
+    $this->assertTrue(get_class($props['drupal']) === 'TableauWorldServer\Utils\DrupalHandler');
   }
 
   /**
@@ -76,7 +88,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     $expectedSourceRoot = 'path/to/source';
     $languageList = $this->getValidLangObjects();
     $expectedFileList = array(
-      'node-1.xlf' => array('type' => 1),
+      'drupal-123-node-1.xlf' => array('type' => 1),
       'unmanaged-file.xlf' => array('type' => 1),
       'unfortunately_named_directory-1.xlf' => array('type' => 2),
     );
@@ -110,9 +122,21 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
       )
       ->willReturn($expectedFileList);
 
+    // Instantiate a querier observer.
+    $observerQuerier = $this->getMockBuilder('TableauWorldServer\Querier')
+      ->setConstructorArgs(array($observerClient, $observerDrupal))
+      ->setMethods(array('parseFilename'))
+      ->getMock();
+
+    // When Querier::parseFile is called, return as expected.
+    $observerQuerier->expects($this->any())
+      ->method('parseFilename')
+      ->will($this->returnCallback(function($filename) {
+        return $filename === 'drupal-123-node-1.xlf' ? array('type' => 'node', 'identifier' => 1) : array();
+      }));
+
     // Instantiate Querier and call getProcessable with ONLY English.
-    $querier = new Querier($observerClient, $observerDrupal);
-    $this->assertEquals($expectedResponse, $querier->getProcessable());
+    $this->assertEquals($expectedResponse, $observerQuerier->getProcessable());
   }
 
   /**
@@ -197,7 +221,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     $expectedSourceRoot = 'path/to/source';
     $languageList = $this->getValidLangObjects();
     $expectedFileList = array(
-      'node-1.xlf' => array(
+      'drupal-123-node-1.xlf' => array(
         'type' => 1,
         'filename' => 'node-1.xlf',
         'size' => 12345,
@@ -251,9 +275,21 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
       )
       ->willReturn($expectedFileList);
 
+    // Instantiate a querier observer.
+    $observerQuerier = $this->getMockBuilder('TableauWorldServer\Querier')
+      ->setConstructorArgs(array($observerClient, $observerDrupal))
+      ->setMethods(array('parseFilename'))
+      ->getMock();
+
+    // When Querier::parseFile is called, return as expected.
+    $observerQuerier->expects($this->any())
+      ->method('parseFilename')
+      ->will($this->returnCallback(function($filename) {
+        return $filename === 'drupal-123-node-1.xlf' ? array('type' => 'node', 'identifier' => 1) : array();
+      }));
+
     // Instantiate Querier and call getProcessable with ONLY English.
-    $querier = new Querier($observerClient, $observerDrupal);
-    $this->assertEquals($expectedResponse, $querier->getProcessed());
+    $this->assertEquals($expectedResponse, $observerQuerier->getProcessed());
   }
 
   /**
@@ -315,9 +351,17 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
    * @test
    * @dataProvider fileNameProvider
    */
-  public function parseFileName($filename, $expectedResponse) {
+  public function parseFileName($filename, $expectedPrefix, $expectedResponse) {
     $mockClient = $this->getConnectedClientMock();
-    $querier = new Querier($mockClient);
+    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+
+    // We expect that DrupalHandler::variableGet() will be called exactly once.
+    $observerDrupal->expects($this->once())
+      ->method('variableGet')
+      ->with(Querier::FILEPREFIXVAR)
+      ->willReturn($expectedPrefix);
+
+    $querier = new Querier($mockClient, $observerDrupal);
     $this->assertEquals($expectedResponse, $querier->parseFilename($filename));
   }
 
@@ -327,15 +371,16 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
    * @return array
    *   An array whose keys are as described:
    *   -0: The filename to be parsed.
-   *   -1: The expected response (an array).
+   *   -1: The expected file prefix.
+   *   -2: The expected response (an array).
    */
   public function fileNameProvider() {
     return array(
-      array('node-123.xlf', array('type' => 'node', 'identifier' => 123)),
-      array('taxonomy_term-999999.xlf', array('type' => 'taxonomy_term', 'identifier' => 999999)),
-      array('Not-real-111.xlf', array()),
-      array('12345-node.xlf', array()),
-      array('Another file', array()),
+      array('drupal-123-node-123.xlf', 'drupal-123', array('type' => 'node', 'identifier' => 123)),
+      array('drupal-123-taxonomy_term-999999.xlf', 'drupal-123', array('type' => 'taxonomy_term', 'identifier' => 999999)),
+      array('Not-real-111.xlf', 'drupal-123', array()),
+      array('drupal-123-12345-node.xlf', 'drupal-123', array()),
+      array('Another file', 'drupal-123', array()),
     );
   }
 

@@ -34,7 +34,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockClient = $this->getConnectedClientMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('languageList'));
+    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
 
     // The DrupalHandler observer expects the variableGet method to be called.
     $observerDrupal->expects($this->once())
@@ -271,10 +271,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   public function setXliffsIgnoresEnglish() {
     $mockWrapper = $this->getWrapperMock();
     $mockClient = $this->getConnectedClientMock();
-    $mockDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
     $mockMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
       ->setMethods(array('getProcessedXliff', 'setXliff'))
-      ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $mockDrupal))
+      ->setConstructorArgs(array($mockClient, $mockWrapper))
       ->getMock();
 
     // The getXliff and putXliff methods should never be called.
@@ -706,15 +705,19 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   /**
    * Tests that MiddleWare::getFilename returns a filename, based on the
    * encapsulated Entity wrapper, in the expected format of:
-   * - [Entity Type]-[Entity ID].xlf
+   * - [Site Prefix]-[Entity Type]-[Entity ID].xlf
    *
    * @test
    */
   public function getFilename() {
+    $expectedPrefix = 'drupal-123';
     $expectedType = 'entity_type';
     $expectedId = 1234;
+    $expectedFilename = implode('-', array($expectedPrefix, $expectedType, $expectedId)) . '.xlf';
+
     $mockClient = $this->getConnectedClientMock();
     $observerWrapper = $this->getWrapperMock(array('type', 'getIdentifier'));
+    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('variableGet'));
 
     // This method should call the entity wrapper's type method once.
     $observerWrapper->expects($this->once())
@@ -726,9 +729,15 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->method('getIdentifier')
       ->willReturn($expectedId);
 
+    // This method should call DrupalHandler::variableGet exactly once.
+    $observerDrupal->expects($this->once())
+      ->method('variableGet')
+      ->with($this->equalTo(MiddleWare::FILEPREFIXVAR))
+      ->willReturn($expectedPrefix);
+
     // Instantiate MiddleWare and run MiddleWare::getFilename().
-    $middleware = new MiddleWare($mockClient, $observerWrapper);
-    $this->assertEquals($expectedType . '-' . $expectedId . '.xlf', $middleware->getFilename());
+    $middleware = new MiddleWare($mockClient, $observerWrapper, NULL, $observerDrupal);
+    $this->assertEquals($expectedFilename, $middleware->getFilename());
   }
 
   /**
