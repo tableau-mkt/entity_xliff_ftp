@@ -172,6 +172,13 @@ class MiddleWare {
           '%label' => $this->wrapper->label(),
         )), 'status');
       }
+      else {
+        $this->drupal->setMessage($this->drupal->t('Problem encountered while processing @language translation for @type %label from WorldServer.', array(
+          '@language' => $lang->name,
+          '@type' => $this->wrapper->type(),
+          '%label' => $this->wrapper->label(),
+        )), 'error');
+      }
     }
   }
 

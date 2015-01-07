@@ -287,7 +287,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   public function setXliffsGetsAndSetsXliffData() {
     $expectedXlfData = '<xml></xml>';
 
-    $mockWrapper = $this->getWrapperMock();
+    $mockWrapper = $this->getWrapperMock(array('type', 'label'));
     $mockClient = $this->getConnectedClientMock();
     $mockDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
     $mockMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
@@ -317,7 +317,44 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function setXliffsSetsDrupalMessages() {
+  public function setXliffsSetsFailureMessages() {
+    $expectedMessage = 'Failure message.';
+
+    $mockWrapper = $this->getWrapperMock(array('type', 'label'));
+    $mockClient = $this->getConnectedClientMock();
+    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+
+    // The t method should be called twice with the expected values.
+    $observerDrupal->expects($this->exactly(2))
+      ->method('t')
+      ->with($this->equalTo('Problem encountered while processing @language translation for @type %label from WorldServer.'))
+      ->willReturn($expectedMessage);
+
+    // The setMessage method should be called twice with the expected values.
+    $observerDrupal->expects($this->exactly(2))
+      ->method('setMessage')
+      ->with($this->equalTo($expectedMessage), $this->equalTo('error'));
+
+    // Build a mock double for MiddleWare (to inject observers on itself).
+    $mockMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
+      ->setMethods(array('getProcessedXliff', 'setXliff'))
+      ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $observerDrupal))
+      ->getMock();
+
+    // Force MiddleWare::setXliff to return TRUE so setMessage is called.
+    $mockMiddleWare->expects($this->any())
+      ->method('setXliff')
+      ->willReturn(FALSE);
+
+    // Invoke MiddleWare::putXliffs on our test double.
+    $mockMiddleWare->setXliffs($this->getValidLangObjects());
+  }
+
+
+  /**
+   * @test
+   */
+  public function setXliffsSetsSuccessMessages() {
     $expectedMessage = 'Success message.';
 
     $mockWrapper = $this->getWrapperMock(array('type', 'label'));
