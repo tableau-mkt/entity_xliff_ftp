@@ -23,6 +23,9 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that Querier::getProcessable will attempt to pull default installed
+   * languages from the DrupalHandler if no languages are provided.
+   *
    * @test
    */
   public function getProcessableGetsDefaultInstalledLanguages() {
@@ -41,6 +44,9 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that Querier::getProcessable will ignore English (not attempt to find
+   * translated XLIFFs whose target language is English).
+   *
    * @test
    */
   public function getProcessableIgnoresEnglish() {
@@ -61,6 +67,9 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that Querier::getProcessable will Net_SFTP::rawList the expected
+   * remote path and return results in the expected format.
+   *
    * @test
    */
   public function getProcessableReturnsResults() {
@@ -107,6 +116,9 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that Querier::getProcessableByEntity will call the getProcessable
+   * method and format the results as expected.
+   *
    * @test
    */
   public function getProcessableByEntity() {
@@ -132,6 +144,9 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that Querier::getProcessed will attempt to pull default installed
+   * languages from the DrupalHandler if no languages are provided.
+   *
    * @test
    */
   public function getProcessedGetsDefaultInstalledLanguages() {
@@ -150,6 +165,9 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that Querier::getProcessed will ignore English (not attempt to find
+   * processed XLIFFs whose target language is English).
+   *
    * @test
    */
   public function getProcessedIgnoresEnglish() {
@@ -170,6 +188,9 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that Querier::getProcessed will Net_SFTP::rawList the expected
+   * remote path and return results in the expected format.
+   *
    * @test
    */
   public function getProcessedReturnsResults() {
@@ -236,6 +257,9 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that Querier::getProcessedByEntity will call the getProcessed
+   * method and format the results as expected.
+   *
    * @test
    */
   public function getProcessedByEntity() {
@@ -286,8 +310,10 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @dataProvider fileNameProvider
+   * Tests that Querier::parseFileName parses file names in the expected format.
+   *
    * @test
+   * @dataProvider fileNameProvider
    */
   public function parseFileName($filename, $expectedResponse) {
     $mockClient = $this->getConnectedClientMock();
@@ -295,6 +321,14 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($expectedResponse, $querier->parseFilename($filename));
   }
 
+  /**
+   * Provides data for QuerierTest::parseFileName.
+   *
+   * @return array
+   *   An array whose keys are as described:
+   *   -0: The filename to be parsed.
+   *   -1: The expected response (an array).
+   */
   public function fileNameProvider() {
     return array(
       array('node-123.xlf', array('type' => 'node', 'identifier' => 123)),

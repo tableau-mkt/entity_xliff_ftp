@@ -239,6 +239,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
 
 
   /**
+   * Tests that MiddleWare::setXliffs will attempt to pull default installed
+   * languages from the DrupalHandler if no languages are provided.
+   *
    * @test
    */
   public function setXliffsGetsDefaultInstalledLanguages() {
@@ -260,6 +263,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that MiddleWare::setXliffs will ignore English (not pull English
+   * XLIFF files).
+   *
    * @test
    */
   public function setXliffsIgnoresEnglish() {
@@ -282,6 +288,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that MiddleWare::setXliffs will Net_SFTP::get XLIFF data and run the
+   * unserialization process on the returned data.
+   *
    * @test
    */
   public function setXliffsGetsAndSetsXliffData() {
@@ -315,6 +324,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that MiddleWare::setXliffs will set success messages for each
+   * valid unserialization attempt.
+   *
    * @test
    */
   public function setXliffsSetsFailureMessages() {
@@ -352,6 +364,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
 
 
   /**
+   * Tests that MiddleWare::setXliffs will set failure messages for each
+   * failed unserialization attempt.
+   *
    * @test
    */
   public function setXliffsSetsSuccessMessages() {
@@ -388,6 +403,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that MiddleWare::setXliffs will not attempt unserialization if no
+   * translatable is found for the given entity wrapper.
+   *
    * @test
    */
   public function setXliffNoTranslatable() {
@@ -412,6 +430,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that MiddleWare::setXliff will return FALSE in the even that XLIFF
+   * unserialization fails.
+   *
    * @test
    */
   public function setXliffUnserializationFailure() {
@@ -444,6 +465,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that MiddleWare::setXliff will unserialize data as expected and call
+   * the MiddleWare::setProcessed method upon successful completion.
+   *
    * @test
    */
   public function setXliff() {
@@ -486,6 +510,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that MiddleWare::getProcessedXliff will return FALSE and set an error
+   * message when no source directory is configured.
+   *
    * @test
    */
   public function getProcessedXliffSourceDoesNotExist() {
@@ -529,14 +556,17 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that MiddleWare::getProcessedXliff will Net_SFTP::get the XLIFF file
+   * from the expected location on the FTP server.
+   *
    * @test
    */
-  public function getProcessedXliffTargetExists() {
-    $expectedTarget = '/path/to/target';
+  public function getProcessedXliffSourceExists() {
+    $expectedSource = '/path/to/source';
     $expectedLang = 'ja';
-    $expectedLangPath = 'en-US_to_ja-JP';
+    $expectedLangPath = 'ja-JP';
     $expectedFilename = 'file.xlf';
-    $expectedFullPath = $expectedTarget . '/' . $expectedLangPath . '/' . $expectedFilename;
+    $expectedFullPath = $expectedSource . '/' . $expectedLangPath . '/' . $expectedFilename;
     $expectedResponse = TRUE;
 
     $observerClient = $this->getConnectedClientMock();
@@ -549,7 +579,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $observerDrupal->expects($this->once())
       ->method('variableGet')
       ->with($this->equalTo(MiddleWare::SOURCEROOTVAR), $this->equalTo(FALSE))
-      ->willReturn($expectedTarget);
+      ->willReturn($expectedSource);
 
     // The client observer expects the put method to be called.
     $observerClient->expects($this->once())
@@ -576,6 +606,10 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that MiddleWare::setProcessed method moves the translated XLIFF file
+   * for a given language to the /processed sub-folder in the source folder and
+   * updates the access time via Net_SFTP::touch.
+   *
    * @test
    */
   public function setProcessed() {
@@ -698,6 +732,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that MiddleWare::getLanguagePathPartTarget returns the the target
+   * language path part as expected.
+   *
    * @test
    * @dataProvider languagePrefixPathPartProvider
    */
@@ -720,6 +757,9 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that MiddleWare::getLanguagePathPartSource returns the source
+   * language path part as expected.
+   *
    * @test
    * @dataProvider languagePrefixPathPartProvider
    */
@@ -784,6 +824,17 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     );
   }
 
+  /**
+   * Data provider for MiddleWareTest::getLanguagePathPartSource.
+   *
+   * @return array
+   *   An array consisting of:
+   *   - 0: Target language,
+   *   - 1: A mock language object,
+   *   - 2: An array consisting of:
+   *     - source: The expected source path for this language.
+   *     - target: The expected target path for this language.
+   */
   public function languagePrefixPathPartProvider() {
     return array(
       array('fr', array('fr' => (object) array('prefix' => 'fr-fr')), array('source' => 'fr-FR', 'target' => 'en-US_to_fr-FR')),
