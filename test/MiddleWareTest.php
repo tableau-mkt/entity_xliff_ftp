@@ -561,6 +561,11 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->with($this->equalTo($expectedFrom), $this->equalTo($expectedTo))
       ->willReturn($expectedClientResponse);
 
+    // We expect that Net_SFTP::touch will be called exactly once.
+    $observerClient->expects($this->once())
+      ->method('touch')
+      ->with($this->equalTo($expectedFrom));
+
     // Create an observer double for the DrupalHandler.
     $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('variableGet'));
 
