@@ -22,7 +22,7 @@ function entity_xliff_ftp_settings($form, &$form_state) {
 
   $form['sftp_details']['entity_xliff_ftp_host'] = array(
     '#title' => t('SFTP hostname'),
-    '#description' => t('Used to make an SFTP. Do not include a protocol.'),
+    '#description' => t('Used to make an SFTP connection. Do not include a protocol.'),
     '#type' => 'textfield',
     '#required' => TRUE,
     '#default_value' => variable_get('entity_xliff_ftp_host', ''),
@@ -30,7 +30,7 @@ function entity_xliff_ftp_settings($form, &$form_state) {
 
   $form['sftp_details']['entity_xliff_ftp_un'] = array(
     '#title' => t('SFTP username'),
-    '#description' => t('Used when connecting to WorldServer.'),
+    '#description' => t('Used when connecting to the remote server.'),
     '#type' => 'textfield',
     '#required' => TRUE,
     '#default_value' => variable_get('entity_xliff_ftp_un', ''),
@@ -38,7 +38,7 @@ function entity_xliff_ftp_settings($form, &$form_state) {
 
   $form['sftp_details']['entity_xliff_ftp_pw'] = array(
     '#title' => t('SFTP password'),
-    '#description' => t('Used when connecting to WorldServer.'),
+    '#description' => t('Used when connecting to the remote server.'),
     '#type' => 'textfield',
     '#required' => TRUE,
     '#default_value' => variable_get('entity_xliff_ftp_pw', ''),
@@ -46,7 +46,7 @@ function entity_xliff_ftp_settings($form, &$form_state) {
 
   $form['sftp_details']['entity_xliff_ftp_target_root'] = array(
     '#title' => t('XLIFF target root path'),
-    '#description' => t('Used as the root directory when pushing XLIFFs to WorldServer.'),
+    '#description' => t('Used as the root directory when pushing XLIFFs to the remote server.'),
     '#type' => 'textfield',
     '#required' => TRUE,
     '#default_value' => variable_get('entity_xliff_ftp_target_root', ''),
@@ -54,7 +54,7 @@ function entity_xliff_ftp_settings($form, &$form_state) {
 
   $form['sftp_details']['entity_xliff_ftp_source_root'] = array(
     '#title' => t('XLIFF source root path'),
-    '#description' => t('Used as the root directory when pulling XLIFFs from WorldServer.'),
+    '#description' => t('Used as the root directory when pulling XLIFFs from the remote server.'),
     '#type' => 'textfield',
     '#required' => TRUE,
     '#default_value' => variable_get('entity_xliff_ftp_source_root', ''),
@@ -113,17 +113,17 @@ function entity_xliff_ftp_overview($form, &$form_state) {
       '#attributes' => array(),
       '#suffix' => '<br />',
     );
-    $form =  confirm_form($form, t('Are you sure you want to process the following WorldServer projects?'), current_path(), NULL, t('Process'));
+    $form =  confirm_form($form, t('Are you sure you want to process the following projects?'), current_path(), NULL, t('Process'));
     $form['actions']['submit']['#submit'] = array('entity_xliff_ftp_overview_process_submit');
     return $form;
   }
 
-  drupal_set_title(t('WorldServer overview'));
+  drupal_set_title(t('Remote file sync overview'));
 
   $form['project_overview'] = array(
     '#type' => 'vertical_tabs',
     '#prefix' => t('You may also be looking to !configure_integration.', array(
-      '!configure_integration' => l(t('configure WorldServer integration'), 'admin/config/services/world-server'),
+      '!configure_integration' => l(t('configure remote server integration'), 'admin/config/services/entity-xliff-ftp'),
     )),
   );
 
@@ -131,7 +131,7 @@ function entity_xliff_ftp_overview($form, &$form_state) {
   $form['pending_overview'] = array(
     '#type' => 'fieldset',
     '#title' => t('Pending projects'),
-    '#description' => t('An overview of pending WorldServer/Drupal projects. Each row represents a piece of content that is awaiting Drupal import.'),
+    '#description' => t('An overview of pending projects. Each row represents a piece of content that is awaiting Drupal import.'),
     '#group' => 'project_overview',
   );
 
@@ -201,7 +201,7 @@ function entity_xliff_ftp_overview($form, &$form_state) {
   $form['processed_overview'] = array(
     '#type' => 'fieldset',
     '#title' => t('Processed projects'),
-    '#description' => t('An overview of recently processed WorldServer/Drupal XLIFFs.'),
+    '#description' => t('An overview of recently processed XLIFFs.'),
     '#group' => 'project_overview',
   );
 
@@ -289,10 +289,10 @@ function _entity_xliff_ftp_form_entity_xliff_actions_alter(&$form, &$form_state)
 
   // Create a fieldset space for ourselves.
   $form['worldserver_integration'] = array(
-    '#title' => t('WorldServer integration'),
+    '#title' => t('Remote file sync integration'),
     '#description' => '<p>' . t('Select languages into which you want to translate this page (defaults to all languages).') . '</p>' .
-      '<p>' . t('Once selected, click %import. This will generate XLIFF files for the selected languages and push them to WorldServer.', array(
-        '%import' => t('Push to WorldServer'),
+      '<p>' . t('Once selected, click %import. This will generate XLIFF files for the selected languages and push them to the remote server.', array(
+        '%import' => t('Push to remote server'),
       )) . '</p>',
     '#type' => 'fieldset',
     '#collapsible' => TRUE,
@@ -312,7 +312,7 @@ function _entity_xliff_ftp_form_entity_xliff_actions_alter(&$form, &$form_state)
 
   $form['worldserver_integration']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Push to WorldServer'),
+    '#value' => t('Push to remote server'),
     '#submit' => array('entity_xliff_ftp_push_xliffs'),
   );
 }

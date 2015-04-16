@@ -14,18 +14,18 @@ use EntityXliffFtp\Querier;
  */
 function entity_xliff_ftp_menu() {
   return array(
-    'admin/config/services/world-server' => array(
-      'title' => 'WorldServer Integration',
-      'description' => 'Configure SFTP credentials and other goodies for connecting with WorldServer.',
+    'admin/config/services/entity-xliff-ftp' => array(
+      'title' => 'Entity XLIFF FTP',
+      'description' => 'Configure SFTP credentials and other settings for localization via remote file sync.',
       'type' => MENU_NORMAL_ITEM,
       'file' => 'inc/admin.inc',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('entity_xliff_ftp_settings'),
       'access arguments' => array('administer entity xliff'),
     ),
-    'admin/config/regional/translate/world-server' => array(
-      'title' => 'WorldServer',
-      'description' => 'Overview of pending and complete Drupal/WorldServer projects',
+    'admin/config/regional/translate/entity-xliff-ftp' => array(
+      'title' => 'Remote File Sync',
+      'description' => 'Overview of pending and complete remote file sync projects',
       'type' => MENU_LOCAL_TASK,
       'file' => 'inc/admin.inc',
       'page callback' => 'drupal_get_form',
@@ -59,7 +59,7 @@ function entity_xliff_ftp_cron() {
         }
         catch (Exception $e) {
           // If the process caused an exception, catch it and log it.
-          watchdog('tableau worldserver integration', 'There was a problem processing XLIFFs from WorldServer for @entity_type @id. Message: !message', array(
+          watchdog('entity xliff ftp', 'There was a problem processing XLIFFs from the remote file system for @entity_type @id. Message: !message', array(
             '@entity_type' => $entityType,
             '@id' => $entityId,
             '!message' => $e->getMessage(),
@@ -72,7 +72,7 @@ function entity_xliff_ftp_cron() {
   // If we processed any entity xliff imports, add a notice.
   if ($entitiesProcessed > 0) {
     // Watchdog notice for logging / Insights.
-    watchdog('tableau worldserver integration', 'Successfully processed !xliff_count XLIFF files across !entity_count entities.', array(
+    watchdog('entity xliff ftp', 'Successfully processed !xliff_count XLIFF files across !entity_count entities.', array(
       '!xliff_count' => $xliffsProcessed,
       '!entity_count' => $entitiesProcessed,
     ), WATCHDOG_NOTICE);
