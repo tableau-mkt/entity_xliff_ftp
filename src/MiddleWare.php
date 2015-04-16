@@ -36,17 +36,17 @@ class MiddleWare {
   /**
    * Describes the Drupal variable name representing the target root.
    */
-  CONST TARGETROOTVAR = 'tableau_worldserver_integration_target_root';
+  CONST TARGETROOTVAR = 'entity_xliff_ftp_target_root';
 
   /**
    * Describes the Drupal variable name representing the source root.
    */
-  CONST SOURCEROOTVAR = 'tableau_worldserver_integration_source_root';
+  CONST SOURCEROOTVAR = 'entity_xliff_ftp_source_root';
 
   /**
    * Describes the Drupal variable name representing the file prefix.
    */
-  CONST FILEPREFIXVAR = 'tableau_worldserver_integration_file_prefix';
+  CONST FILEPREFIXVAR = 'entity_xliff_ftp_file_prefix';
 
   /**
    * @param \Net_SFTP $client

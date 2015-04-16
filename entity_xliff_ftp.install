@@ -12,7 +12,7 @@
 function entity_xliff_ftp_install() {
   // Initialize the file prefix with a unique enough value.
   $uniqueEnough = uniqid('drupal-');
-  variable_set('tableau_worldserver_integration_file_prefix', $uniqueEnough);
+  variable_set('entity_xliff_ftp_file_prefix', $uniqueEnough);
 }
 
 /**
@@ -20,13 +20,13 @@ function entity_xliff_ftp_install() {
  */
 function entity_xliff_ftp_uninstall() {
   $vars = array(
-    'tableau_worldserver_integration_sftp_host',
-    'tableau_worldserver_integration_sftp_un',
-    'tableau_worldserver_integration_sftp_pw',
-    'tableau_worldserver_integration_target_root',
-    'tableau_worldserver_integration_source_root',
-    'tableau_worldserver_integration_last_processed',
-    'tableau_worldserver_integration_file_prefix',
+    'entity_xliff_ftp_host',
+    'entity_xliff_ftp_un',
+    'entity_xliff_ftp_pw',
+    'entity_xliff_ftp_target_root',
+    'entity_xliff_ftp_source_root',
+    'entity_xliff_ftp_last_processed',
+    'entity_xliff_ftp_file_prefix',
   );
 
   foreach ($vars as $var) {

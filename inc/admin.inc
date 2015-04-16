@@ -20,52 +20,52 @@ function entity_xliff_ftp_settings($form, &$form_state) {
     '#collapsed' => TRUE,
   );
 
-  $form['sftp_details']['tableau_worldserver_integration_sftp_host'] = array(
+  $form['sftp_details']['entity_xliff_ftp_host'] = array(
     '#title' => t('SFTP hostname'),
     '#description' => t('Used to make an SFTP. Do not include a protocol.'),
     '#type' => 'textfield',
     '#required' => TRUE,
-    '#default_value' => variable_get('tableau_worldserver_integration_sftp_host', ''),
+    '#default_value' => variable_get('entity_xliff_ftp_host', ''),
   );
 
-  $form['sftp_details']['tableau_worldserver_integration_sftp_un'] = array(
+  $form['sftp_details']['entity_xliff_ftp_un'] = array(
     '#title' => t('SFTP username'),
     '#description' => t('Used when connecting to WorldServer.'),
     '#type' => 'textfield',
     '#required' => TRUE,
-    '#default_value' => variable_get('tableau_worldserver_integration_sftp_un', ''),
+    '#default_value' => variable_get('entity_xliff_ftp_un', ''),
   );
 
-  $form['sftp_details']['tableau_worldserver_integration_sftp_pw'] = array(
+  $form['sftp_details']['entity_xliff_ftp_pw'] = array(
     '#title' => t('SFTP password'),
     '#description' => t('Used when connecting to WorldServer.'),
     '#type' => 'textfield',
     '#required' => TRUE,
-    '#default_value' => variable_get('tableau_worldserver_integration_sftp_pw', ''),
+    '#default_value' => variable_get('entity_xliff_ftp_pw', ''),
   );
 
-  $form['sftp_details']['tableau_worldserver_integration_target_root'] = array(
+  $form['sftp_details']['entity_xliff_ftp_target_root'] = array(
     '#title' => t('XLIFF target root path'),
     '#description' => t('Used as the root directory when pushing XLIFFs to WorldServer.'),
     '#type' => 'textfield',
     '#required' => TRUE,
-    '#default_value' => variable_get('tableau_worldserver_integration_target_root', ''),
+    '#default_value' => variable_get('entity_xliff_ftp_target_root', ''),
   );
 
-  $form['sftp_details']['tableau_worldserver_integration_source_root'] = array(
+  $form['sftp_details']['entity_xliff_ftp_source_root'] = array(
     '#title' => t('XLIFF source root path'),
     '#description' => t('Used as the root directory when pulling XLIFFs from WorldServer.'),
     '#type' => 'textfield',
     '#required' => TRUE,
-    '#default_value' => variable_get('tableau_worldserver_integration_source_root', ''),
+    '#default_value' => variable_get('entity_xliff_ftp_source_root', ''),
   );
 
-  $form['sftp_details']['tableau_worldserver_integration_file_prefix'] = array(
+  $form['sftp_details']['entity_xliff_ftp_file_prefix'] = array(
     '#title' => t('XLIFF file prefix'),
     '#description' => t('Used to uniquely identify this Drupal instance from other Drupal instances when sharing the same FTP source/target roots. Note: this value should not be changed while projects are still pending.'),
     '#type' => 'textfield',
     '#required' => TRUE,
-    '#default_value' => variable_get('tableau_worldserver_integration_file_prefix', ''),
+    '#default_value' => variable_get('entity_xliff_ftp_file_prefix', ''),
   );
 
   return system_settings_form($form);
@@ -249,7 +249,7 @@ function entity_xliff_ftp_overview($form, &$form_state) {
   }
 
   // Add a message that indicates when processing last occurred.
-  $lastProcessed = variable_get('tableau_worldserver_integration_last_processed', 0);
+  $lastProcessed = variable_get('entity_xliff_ftp_last_processed', 0);
   $lastProcessed = new DateObject($lastProcessed);
   $form['processed_overview']['table']['#prefix'] = '<p>' . t('Processing last occurred @date.', array(
       '@date' => date_format_date($lastProcessed),
@@ -272,7 +272,7 @@ function entity_xliff_ftp_overview_process_submit($form, &$form_state) {
         entity_xliff_ftp_set_entity_xliffs($entityType, $entityId, $targetLangs);
       }
     }
-    variable_set('tableau_worldserver_integration_last_processed', REQUEST_TIME);
+    variable_set('entity_xliff_ftp_last_processed', REQUEST_TIME);
   }
 }
 

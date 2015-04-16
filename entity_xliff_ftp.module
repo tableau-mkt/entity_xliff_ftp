@@ -78,7 +78,7 @@ function entity_xliff_ftp_cron() {
     ), WATCHDOG_NOTICE);
 
     // Set this variable. Used in admin UI on overview page.
-    variable_set('tableau_worldserver_integration_last_processed', REQUEST_TIME);
+    variable_set('entity_xliff_ftp_last_processed', REQUEST_TIME);
   }
 }
 
@@ -100,9 +100,9 @@ function entity_xliff_ftp_sftp_client() {
   $client = &drupal_static(__FUNCTION__, FALSE);
 
   if ($client === FALSE) {
-    $host = variable_get('tableau_worldserver_integration_sftp_host', FALSE);
-    $un = variable_get('tableau_worldserver_integration_sftp_un', FALSE);
-    $pw = variable_get('tableau_worldserver_integration_sftp_pw', FALSE);
+    $host = variable_get('entity_xliff_ftp_host', FALSE);
+    $un = variable_get('entity_xliff_ftp_un', FALSE);
+    $pw = variable_get('entity_xliff_ftp_pw', FALSE);
 
     if ($host && $un && $pw) {
       $client = new Net_SFTP($host);
@@ -157,7 +157,7 @@ function entity_xliff_ftp_get_middleware(\EntityDrupalWrapper $wrapper) {
  */
 function entity_xliff_ftp_get_processable(array $langs = array()) {
   $response = array();
-  if ($client = tableau_worldserver_integration_sftp_client()) {
+  if ($client = entity_xliff_ftp_sftp_client()) {
     $query = new Querier($client);
     $response = $query->getProcessableByEntity($langs);
   }
