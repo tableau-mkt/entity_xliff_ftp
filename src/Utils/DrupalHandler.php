@@ -6,7 +6,7 @@
  * Drupal procedural functions for unit-testability.
  */
 
-namespace TableauWorldServer\Utils;
+namespace EntityXliffFtp\Utils;
 
 
 class DrupalHandler {

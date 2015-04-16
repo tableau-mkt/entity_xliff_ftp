@@ -1,8 +1,8 @@
 <?php
 
-namespace TableauWorldServer\Tests;
+namespace EntityXliffFtp\Tests;
 
-use TableauWorldServer\MiddleWare;
+use EntityXliffFtp\MiddleWare;
 
 class MiddleWareTest extends \PHPUnit_Framework_TestCase {
 
@@ -34,7 +34,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockClient = $this->getConnectedClientMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // The DrupalHandler observer expects the variableGet method to be called.
     $observerDrupal->expects($this->once())
@@ -56,8 +56,8 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   public function putXliffsIgnoresEnglish() {
     $mockWrapper = $this->getWrapperMock();
     $mockClient = $this->getConnectedClientMock();
-    $mockDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
-    $mockMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
+    $mockDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
+    $mockMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setMethods(array('getXliff', 'putXliff', 'getFilename'))
       ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $mockDrupal))
       ->getMock();
@@ -85,8 +85,8 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
 
     $mockWrapper = $this->getWrapperMock();
     $mockClient = $this->getConnectedClientMock();
-    $mockDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
-    $mockMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
+    $mockDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
+    $mockMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setMethods(array('getXliff', 'putXliff', 'getFilename'))
       ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $mockDrupal))
       ->getMock();
@@ -126,7 +126,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
 
     $mockWrapper = $this->getWrapperMock(array('type', 'label'));
     $mockClient = $this->getConnectedClientMock();
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // The t method should be called twice with the expected values.
     $observerDrupal->expects($this->exactly(2))
@@ -140,7 +140,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->with($this->equalTo($expectedMessage), $this->equalTo('status'));
 
     // Build a mock double for MiddleWare (to inject observers on itself).
-    $mockMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
+    $mockMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setMethods(array('getXliff', 'putXliff', 'getFilename'))
       ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $observerDrupal))
       ->getMock();
@@ -173,7 +173,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->method('put');
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array(
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array(
       'variableGet',
       'setMessage',
       't',
@@ -218,7 +218,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockWrapper = $this->getWrapperMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('variableGet'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('variableGet'));
 
     // The DrupalHandler observer expects the variableGet method to be called.
     $observerDrupal->expects($this->once())
@@ -249,7 +249,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockClient = $this->getConnectedClientMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('languageList'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('languageList'));
 
     // The DrupalHandler observer expects the variableGet method to be called.
     $observerDrupal->expects($this->once())
@@ -271,7 +271,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   public function setXliffsIgnoresEnglish() {
     $mockWrapper = $this->getWrapperMock();
     $mockClient = $this->getConnectedClientMock();
-    $mockMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
+    $mockMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setMethods(array('getProcessedXliff', 'setXliff'))
       ->setConstructorArgs(array($mockClient, $mockWrapper))
       ->getMock();
@@ -297,8 +297,8 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
 
     $mockWrapper = $this->getWrapperMock(array('type', 'label'));
     $mockClient = $this->getConnectedClientMock();
-    $mockDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
-    $mockMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
+    $mockDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
+    $mockMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setMethods(array('getProcessedXliff', 'setXliff'))
       ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $mockDrupal))
       ->getMock();
@@ -333,12 +333,12 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
 
     $mockWrapper = $this->getWrapperMock(array('type', 'label'));
     $mockClient = $this->getConnectedClientMock();
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // The t method should be called twice with the expected values.
     $observerDrupal->expects($this->exactly(2))
       ->method('t')
-      ->with($this->equalTo('Problem encountered while processing @language translation for @type %label from WorldServer.'))
+      ->with($this->equalTo('Problem encountered while processing @language translation for @type %label from the remote server.'))
       ->willReturn($expectedMessage);
 
     // The setMessage method should be called twice with the expected values.
@@ -347,7 +347,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->with($this->equalTo($expectedMessage), $this->equalTo('error'));
 
     // Build a mock double for MiddleWare (to inject observers on itself).
-    $mockMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
+    $mockMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setMethods(array('getProcessedXliff', 'setXliff'))
       ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $observerDrupal))
       ->getMock();
@@ -373,12 +373,12 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
 
     $mockWrapper = $this->getWrapperMock(array('type', 'label'));
     $mockClient = $this->getConnectedClientMock();
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // The t method should be called twice with the expected values.
     $observerDrupal->expects($this->exactly(2))
       ->method('t')
-      ->with($this->equalTo('Successfully processed @language translation for @type %label from WorldServer.'))
+      ->with($this->equalTo('Successfully processed @language translation for @type %label from the remote server.'))
       ->willReturn($expectedMessage);
 
     // The setMessage method should be called twice with the expected values.
@@ -387,7 +387,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->with($this->equalTo($expectedMessage), $this->equalTo('status'));
 
     // Build a mock double for MiddleWare (to inject observers on itself).
-    $mockMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
+    $mockMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setMethods(array('getProcessedXliff', 'setXliff'))
       ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $observerDrupal))
       ->getMock();
@@ -412,7 +412,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockWrapper = $this->getWrapperMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('entityXliffGetTranslatable'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('entityXliffGetTranslatable'));
     $observerDrupal->expects($this->once())
       ->method('entityXliffGetTranslatable')
       ->with($this->identicalTo($mockWrapper))
@@ -445,7 +445,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockWrapper = $this->getWrapperMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('entityXliffGetTranslatable'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('entityXliffGetTranslatable'));
     $observerDrupal->expects($this->once())
       ->method('entityXliffGetTranslatable')
       ->with($this->identicalTo($mockWrapper))
@@ -481,7 +481,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockWrapper = $this->getWrapperMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('entityXliffGetTranslatable'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('entityXliffGetTranslatable'));
     $observerDrupal->expects($this->once())
       ->method('entityXliffGetTranslatable')
       ->with($this->identicalTo($mockWrapper))
@@ -495,7 +495,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->willReturn(TRUE);
 
     // Set up an observer middleware instance.
-    $observerMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
+    $observerMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setConstructorArgs(array($mockClient, $mockWrapper, $observerSerializer, $observerDrupal))
       ->setMethods(array('setProcessed'))
       ->getMock();
@@ -527,7 +527,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->method('get');
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array(
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array(
       'variableGet',
       'setMessage',
       't',
@@ -572,7 +572,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockWrapper = $this->getWrapperMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('variableGet'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('variableGet'));
 
     // The DrupalHandler observer expects the variableGet method to be called.
     $observerDrupal->expects($this->once())
@@ -586,7 +586,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->with($this->equalTo($expectedFullPath))
       ->willReturn($expectedResponse);
 
-    $observerMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
+    $observerMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setConstructorArgs(array($observerClient, $mockWrapper, NULL, $observerDrupal))
       ->setMethods(array('getLanguagePathPartSource', 'getFilename'))
       ->getMock();
@@ -637,7 +637,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->with($this->equalTo($expectedFrom));
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('variableGet'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('variableGet'));
 
     // The DrupalHandler observer expects the variableGet method to be called.
     $observerDrupal->expects($this->once())
@@ -646,7 +646,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->willReturn($expectedRoot);
 
     // Create an observer double for our MiddleWare class.
-    $observerMiddleWare = $this->getMockBuilder('TableauWorldServer\MiddleWare')
+    $observerMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setConstructorArgs(array($observerClient, $mockWrapper, NULL, $observerDrupal))
       ->setMethods(array('getLanguagePathPartSource', 'getFilename'))
       ->getMock();
@@ -685,7 +685,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->getMock();
 
     // Set up an observer on the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // We expect the entityXliffGetTranslatable method to be called.
     $observerDrupal->expects($this->once())
@@ -717,7 +717,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
 
     $mockClient = $this->getConnectedClientMock();
     $observerWrapper = $this->getWrapperMock(array('type', 'getIdentifier'));
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('variableGet'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('variableGet'));
 
     // This method should call the entity wrapper's type method once.
     $observerWrapper->expects($this->once())
@@ -752,7 +752,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockWrapper = $this->getWrapperMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('languageList'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('languageList'));
 
     // The DrupalHandler observer expects the variableGet method to be called.
     $observerDrupal->expects($this->once())
@@ -777,7 +777,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockWrapper = $this->getWrapperMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler', array('languageList'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('languageList'));
 
     // The DrupalHandler observer expects the variableGet method to be called.
     $observerDrupal->expects($this->once())

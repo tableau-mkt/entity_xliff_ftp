@@ -5,10 +5,10 @@
  * Contains the MiddleWare class.
  */
 
-namespace TableauWorldServer;
+namespace EntityXliffFtp;
 
 use EggsCereal\Serializer;
-use TableauWorldServer\Utils\DrupalHandler;
+use EntityXliffFtp\Utils\DrupalHandler;
 
 
 class MiddleWare {
@@ -36,17 +36,17 @@ class MiddleWare {
   /**
    * Describes the Drupal variable name representing the target root.
    */
-  CONST TARGETROOTVAR = 'tableau_worldserver_integration_target_root';
+  CONST TARGETROOTVAR = 'entity_xliff_ftp_target_root';
 
   /**
    * Describes the Drupal variable name representing the source root.
    */
-  CONST SOURCEROOTVAR = 'tableau_worldserver_integration_source_root';
+  CONST SOURCEROOTVAR = 'entity_xliff_ftp_source_root';
 
   /**
    * Describes the Drupal variable name representing the file prefix.
    */
-  CONST FILEPREFIXVAR = 'tableau_worldserver_integration_file_prefix';
+  CONST FILEPREFIXVAR = 'entity_xliff_ftp_file_prefix';
 
   /**
    * @param \Net_SFTP $client
@@ -152,8 +152,8 @@ class MiddleWare {
   }
 
   /**
-   * Reads translated/processed XLIFF data from Worldserver, unserializes the
-   * data against the wrapped entity, and saves all relevant entities.
+   * Reads translated/processed XLIFF data from the remote server, unserializes
+   * the data against the wrapped entity, and saves all relevant entities.
    *
    * @param object[] $langs
    *   An associative array of Drupal language objects, keyed by their language
@@ -171,14 +171,14 @@ class MiddleWare {
     // Iterate through all languages, generate XLIFF data, and put those files.
     foreach ($langs as $targetLang => $lang) {
       if ($this->setXliff($this->getProcessedXliff($targetLang), $targetLang)) {
-        $this->drupal->setMessage($this->drupal->t('Successfully processed @language translation for @type %label from WorldServer.', array(
+        $this->drupal->setMessage($this->drupal->t('Successfully processed @language translation for @type %label from the remote server.', array(
           '@language' => $lang->name,
           '@type' => $this->wrapper->type(),
           '%label' => $this->wrapper->label(),
         )), 'status');
       }
       else {
-        $this->drupal->setMessage($this->drupal->t('Problem encountered while processing @language translation for @type %label from WorldServer.', array(
+        $this->drupal->setMessage($this->drupal->t('Problem encountered while processing @language translation for @type %label from the remote server.', array(
           '@language' => $lang->name,
           '@type' => $this->wrapper->type(),
           '%label' => $this->wrapper->label(),
