@@ -5,10 +5,10 @@
  * Contains the MiddleWare class.
  */
 
-namespace TableauWorldServer;
+namespace EntityXliffFtp;
 
 use EggsCereal\Serializer;
-use TableauWorldServer\Utils\DrupalHandler;
+use EntityXliffFtp\Utils\DrupalHandler;
 
 
 class MiddleWare {

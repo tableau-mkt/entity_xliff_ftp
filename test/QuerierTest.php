@@ -1,8 +1,8 @@
 <?php
 
-namespace TableauWorldServer\Tests;
+namespace EntityXliffFtp\Tests;
 
-use TableauWorldServer\Querier;
+use EntityXliffFtp\Querier;
 
 class QuerierTest extends \PHPUnit_Framework_TestCase {
 
@@ -31,7 +31,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     $mockClient = $this->getConnectedClientMock();
     $querier = new Querier($mockClient);
     $props = get_object_vars($querier);
-    $this->assertTrue(get_class($props['drupal']) === 'TableauWorldServer\Utils\DrupalHandler');
+    $this->assertTrue(get_class($props['drupal']) === 'EntityXliffFtp\Utils\DrupalHandler');
   }
 
   /**
@@ -42,7 +42,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
    */
   public function getProcessableGetsDefaultInstalledLanguages() {
     $mockClient = $this->getConnectedClientMock();
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // We expect that DrupalHandler::languageList() will be called exactly once.
     $observerDrupal->expects($this->once())
@@ -63,7 +63,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
    */
   public function getProcessableIgnoresEnglish() {
     $observerClient = $this->getConnectedClientMock();
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // We expect that DrupalHandler::languageList() will never be called.
     $observerDrupal->expects($this->never())
@@ -98,7 +98,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     );
 
     $observerClient = $this->getConnectedClientMock();
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // We expect that DrupalHandler::variableGet() will be called exactly once.
     $observerDrupal->expects($this->once())
@@ -123,7 +123,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
       ->willReturn($expectedFileList);
 
     // Instantiate a querier observer.
-    $observerQuerier = $this->getMockBuilder('TableauWorldServer\Querier')
+    $observerQuerier = $this->getMockBuilder('EntityXliffFtp\Querier')
       ->setConstructorArgs(array($observerClient, $observerDrupal))
       ->setMethods(array('parseFilename'))
       ->getMock();
@@ -149,7 +149,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     $expectedLangs = $this->getValidLangObjects();
     $expectedResponse = array('node' => array(1 => array('fr' => 'fr', 'de' => 'de')));
 
-    $observerQuerier = $this->getMockBuilder('TableauWorldServer\Querier')
+    $observerQuerier = $this->getMockBuilder('EntityXliffFtp\Querier')
       ->disableOriginalConstructor()
       ->setMethods(array('getProcessable'))
       ->getMock();
@@ -175,7 +175,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
    */
   public function getProcessedGetsDefaultInstalledLanguages() {
     $mockClient = $this->getConnectedClientMock();
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // We expect that DrupalHandler::languageList() will be called exactly once.
     $observerDrupal->expects($this->once())
@@ -196,7 +196,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
    */
   public function getProcessedIgnoresEnglish() {
     $observerClient = $this->getConnectedClientMock();
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // We expect that DrupalHandler::languageList() will never be called.
     $observerDrupal->expects($this->never())
@@ -251,7 +251,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     );
 
     $observerClient = $this->getConnectedClientMock();
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // We expect that DrupalHandler::variableGet() will be called exactly once.
     $observerDrupal->expects($this->once())
@@ -276,7 +276,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
       ->willReturn($expectedFileList);
 
     // Instantiate a querier observer.
-    $observerQuerier = $this->getMockBuilder('TableauWorldServer\Querier')
+    $observerQuerier = $this->getMockBuilder('EntityXliffFtp\Querier')
       ->setConstructorArgs(array($observerClient, $observerDrupal))
       ->setMethods(array('parseFilename'))
       ->getMock();
@@ -317,7 +317,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
           ),
         )));
 
-    $observerQuerier = $this->getMockBuilder('TableauWorldServer\Querier')
+    $observerQuerier = $this->getMockBuilder('EntityXliffFtp\Querier')
       ->disableOriginalConstructor()
       ->setMethods(array('getProcessed'))
       ->getMock();
@@ -353,7 +353,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
    */
   public function parseFileName($filename, $expectedPrefix, $expectedResponse) {
     $mockClient = $this->getConnectedClientMock();
-    $observerDrupal = $this->getMock('TableauWorldServer\Utils\DrupalHandler');
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // We expect that DrupalHandler::variableGet() will be called exactly once.
     $observerDrupal->expects($this->once())

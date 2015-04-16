@@ -5,10 +5,10 @@
  * Contains the Querier class for querying world server.
  */
 
-namespace TableauWorldServer;
+namespace EntityXliffFtp;
 
 
-use TableauWorldServer\Utils\DrupalHandler;
+use EntityXliffFtp\Utils\DrupalHandler;
 
 class Querier {
 
