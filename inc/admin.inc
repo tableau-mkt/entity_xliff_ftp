@@ -2,16 +2,16 @@
 
 /**
  * @file
- * Functions/callbacks used to administer the World Server Integration module.
+ * Functions/callbacks used to administer the Entity XLIFF FTP module.
  */
 
 
 /**
  * Primary Drupal settings form callback.
  *
- * @see tableau_worldserver_integration_menu()
+ * @see entity_xliff_ftp_menu()
  */
-function tableau_worldserver_integration_settings($form, &$form_state) {
+function entity_xliff_ftp_settings($form, &$form_state) {
 
   $form['sftp_details'] = array(
     '#title' => t('SFTP details'),
@@ -74,9 +74,9 @@ function tableau_worldserver_integration_settings($form, &$form_state) {
 /**
  * Drupal settings form callback for WorldServer integration overview page.
  *
- * @see tableau_worldserver_integration_menu()
+ * @see entity_xliff_ftp_menu()
  */
-function tableau_worldserver_integration_overview($form, &$form_state) {
+function entity_xliff_ftp_overview($form, &$form_state) {
   $languages = language_list();
   if (isset($form_state['storage']['confirm_process_action'])) {
     // Define which entities are to be processed (both in storage and in the UI)
@@ -114,7 +114,7 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
       '#suffix' => '<br />',
     );
     $form =  confirm_form($form, t('Are you sure you want to process the following WorldServer projects?'), current_path(), NULL, t('Process'));
-    $form['actions']['submit']['#submit'] = array('tableau_worldserver_integration_overview_process_submit');
+    $form['actions']['submit']['#submit'] = array('entity_xliff_ftp_overview_process_submit');
     return $form;
   }
 
@@ -136,7 +136,7 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
   );
 
   // Load in pending/processable projects.
-  $form_state['storage']['processable'] = tableau_worldserver_integration_get_processable();
+  $form_state['storage']['processable'] = entity_xliff_ftp_get_processable();
 
   // Prepare the table.
   $header = array('', t('Label'), t('Type'), t('Bundle'), t('Identifier'), t('Pending languages'));
@@ -184,7 +184,7 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
   $form['pending_overview']['process'] = array(
     '#type' => 'submit',
     '#value' => t('Process selected projects'),
-    '#submit' => array('tableau_worldserver_integration_overview_process_submit'),
+    '#submit' => array('entity_xliff_ftp_overview_process_submit'),
     // Disabled by default. Enabled when any one processable item is checked.
     '#disabled' => count($rows) <= 0,
     '#states' => array(
@@ -206,7 +206,7 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
   );
 
   // Load in processed projects.
-  $form_state['storage']['processed'] = tableau_worldserver_integration_get_processed();
+  $form_state['storage']['processed'] = entity_xliff_ftp_get_processed();
 
   // Prepare the table.
   $header = array(t('Label'), t('Language'), t('Processed'));
@@ -258,7 +258,7 @@ function tableau_worldserver_integration_overview($form, &$form_state) {
   return $form;
 }
 
-function tableau_worldserver_integration_overview_process_submit($form, &$form_state) {
+function entity_xliff_ftp_overview_process_submit($form, &$form_state) {
   // If the form has not yet been confirmed, force a rebuild w/confirm form.
   if (!isset($form_state['storage']['confirm_process_action'])) {
     $form_state['storage']['confirm_process_action'] = TRUE;
@@ -269,7 +269,7 @@ function tableau_worldserver_integration_overview_process_submit($form, &$form_s
     $toBeProcessed = $form_state['storage']['to_be_processed'];
     foreach ($toBeProcessed as $entityType => $entities) {
       foreach ($entities as $entityId => $targetLangs) {
-        tableau_worldserver_integration_set_entity_xliffs($entityType, $entityId, $targetLangs);
+        entity_xliff_ftp_set_entity_xliffs($entityType, $entityId, $targetLangs);
       }
     }
     variable_set('tableau_worldserver_integration_last_processed', REQUEST_TIME);
@@ -277,9 +277,9 @@ function tableau_worldserver_integration_overview_process_submit($form, &$form_s
 }
 
 /**
- * @see tableau_worldserver_integration_form_entity_xliff_actions_alter()
+ * @see entity_xliff_ftp_form_entity_xliff_actions_alter()
  */
-function _tableau_worldserver_integration_form_entity_xliff_actions_alter(&$form, &$form_state) {
+function _entity_xliff_ftp_form_entity_xliff_actions_alter(&$form, &$form_state) {
   // Do not show this on non-English pages for now. Currently, we only support
   // exporting XLIFFs for English. @todo
   $node = menu_get_object('node');
@@ -313,16 +313,16 @@ function _tableau_worldserver_integration_form_entity_xliff_actions_alter(&$form
   $form['worldserver_integration']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Push to WorldServer'),
-    '#submit' => array('tableau_worldserver_integration_push_xliffs'),
+    '#submit' => array('entity_xliff_ftp_push_xliffs'),
   );
 }
 
 /**
  * Submit handler for pushing XLIFFs to WorldServer through the UI.
  *
- * @see _tableau_worldserver_integration_form_entity_xliff_actions_alter()
+ * @see _entity_xliff_ftp_form_entity_xliff_actions_alter()
  */
-function tableau_worldserver_integration_push_xliffs($form, &$form_state) {
+function entity_xliff_ftp_push_xliffs($form, &$form_state) {
   if (isset($form_state['values']['languages'])) {
     // Filter down to just the selected languages.
     $selectedLangs = $form_state['values']['languages'];
@@ -335,6 +335,6 @@ function tableau_worldserver_integration_push_xliffs($form, &$form_state) {
     $entity = $form_state['build_info']['args'][1];
 
     // Push selected languages to WorldServer.
-    tableau_worldserver_integration_put_entity_xliffs($type, $entity, $langs);
+    entity_xliff_ftp_put_entity_xliffs($type, $entity, $langs);
   }
 }

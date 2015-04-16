@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Module hooks and functions for the Tableau WorldServer Integration module.
+ * Module hooks and functions for the Entity XLIFF FTP module.
  */
 
-use TableauWorldServer\MiddleWare;
-use TableauWorldServer\Querier;
+use EntityXliffFtp\MiddleWare;
+use EntityXliffFtp\Querier;
 
 
 /**
  * Implements hook_menu().
  */
-function tableau_worldserver_integration_menu() {
+function entity_xliff_ftp_menu() {
   return array(
     'admin/config/services/world-server' => array(
       'title' => 'WorldServer Integration',
@@ -20,7 +20,7 @@ function tableau_worldserver_integration_menu() {
       'type' => MENU_NORMAL_ITEM,
       'file' => 'inc/admin.inc',
       'page callback' => 'drupal_get_form',
-      'page arguments' => array('tableau_worldserver_integration_settings'),
+      'page arguments' => array('entity_xliff_ftp_settings'),
       'access arguments' => array('administer entity xliff'),
     ),
     'admin/config/regional/translate/world-server' => array(
@@ -29,7 +29,7 @@ function tableau_worldserver_integration_menu() {
       'type' => MENU_LOCAL_TASK,
       'file' => 'inc/admin.inc',
       'page callback' => 'drupal_get_form',
-      'page arguments' => array('tableau_worldserver_integration_overview'),
+      'page arguments' => array('entity_xliff_ftp_overview'),
       'access arguments' => array('administer entity xliff'),
     ),
   );
@@ -38,11 +38,11 @@ function tableau_worldserver_integration_menu() {
 /**
  * Implements hook_cron().
  */
-function tableau_worldserver_integration_cron() {
+function entity_xliff_ftp_cron() {
   $entitiesProcessed = 0;
   $xliffsProcessed = 0;
 
-  if ($processable = tableau_worldserver_integration_get_processable()) {
+  if ($processable = entity_xliff_ftp_get_processable()) {
     $languages = language_list();
     foreach ($processable as $entityType => $entities) {
       foreach ($entities as $entityId => $langs) {
@@ -53,7 +53,7 @@ function tableau_worldserver_integration_cron() {
 
         // Process the XLIFFs.
         try {
-          tableau_worldserver_integration_set_entity_xliffs($entityType, $entityId, $processLangs);
+          entity_xliff_ftp_set_entity_xliffs($entityType, $entityId, $processLangs);
           $entitiesProcessed++;
           $xliffsProcessed += count($processLangs);
         }
@@ -85,9 +85,9 @@ function tableau_worldserver_integration_cron() {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function tableau_worldserver_integration_form_entity_xliff_actions_alter(&$form, &$form_state) {
-  module_load_include('inc', 'tableau_worldserver_integration', 'inc/admin');
-  _tableau_worldserver_integration_form_entity_xliff_actions_alter($form, $form_state);
+function entity_xliff_ftp_form_entity_xliff_actions_alter(&$form, &$form_state) {
+  module_load_include('inc', 'entity_xliff_ftp', 'inc/admin');
+  _entity_xliff_ftp_form_entity_xliff_actions_alter($form, $form_state);
 }
 
 /**
@@ -96,7 +96,7 @@ function tableau_worldserver_integration_form_entity_xliff_actions_alter(&$form,
  * @return Net_SFTP|null
  *   An authenticated Net_SFTP instance or NULL on failure.
  */
-function tableau_worldserver_integration_sftp_client() {
+function entity_xliff_ftp_sftp_client() {
   $client = &drupal_static(__FUNCTION__, FALSE);
 
   if ($client === FALSE) {
@@ -125,12 +125,12 @@ function tableau_worldserver_integration_sftp_client() {
  * @param \EntityDrupalWrapper $wrapper
  * @return MiddleWare|bool
  */
-function tableau_worldserver_integration_get_middleware(\EntityDrupalWrapper $wrapper) {
+function entity_xliff_ftp_get_middleware(\EntityDrupalWrapper $wrapper) {
   $middleware = &drupal_static(__FUNCTION__, array());
   $key = $wrapper->type() . ':' . $wrapper->getIdentifier();
 
   if (!array_key_exists($key, $middleware)) {
-    if ($client = tableau_worldserver_integration_sftp_client()) {
+    if ($client = entity_xliff_ftp_sftp_client()) {
       $middleware[$key] = new MiddleWare($client, $wrapper);
     }
     else {
@@ -155,7 +155,7 @@ function tableau_worldserver_integration_get_middleware(\EntityDrupalWrapper $wr
  *     - [entity_type]: An array of entity IDs to be processed, keyed by the
  *       type of entity.
  */
-function tableau_worldserver_integration_get_processable(array $langs = array()) {
+function entity_xliff_ftp_get_processable(array $langs = array()) {
   $response = array();
   if ($client = tableau_worldserver_integration_sftp_client()) {
     $query = new Querier($client);
@@ -168,9 +168,9 @@ function tableau_worldserver_integration_get_processable(array $langs = array())
  * @param array $langs
  * @return array
  */
-function tableau_worldserver_integration_get_processed(array $langs = array()) {
+function entity_xliff_ftp_get_processed(array $langs = array()) {
   $response = array();
-  if ($client = tableau_worldserver_integration_sftp_client()) {
+  if ($client = entity_xliff_ftp_sftp_client()) {
     $query = new Querier($client);
     $response = $query->getProcessedByEntity($langs);
   }
@@ -191,9 +191,9 @@ function tableau_worldserver_integration_get_processed(array $langs = array()) {
  *   (optional) An associative array of Drupal language objects, keyed by
  *   language. If nothing is provided, all installed languages will be assumed.
  */
-function tableau_worldserver_integration_put_entity_xliffs($type, $entity, $langs = array()) {
+function entity_xliff_ftp_put_entity_xliffs($type, $entity, $langs = array()) {
   $wrapper = entity_metadata_wrapper($type, $entity);
-  if ($middleware = tableau_worldserver_integration_get_middleware($wrapper)) {
+  if ($middleware = entity_xliff_ftp_get_middleware($wrapper)) {
     // Get the middleware provider and push up configured files.
     $middleware->putXliffs($langs);
   }
@@ -213,9 +213,9 @@ function tableau_worldserver_integration_put_entity_xliffs($type, $entity, $lang
  *   (optional) An associative array of Drupal language objects, keyed by
  *   language. If nothing is provided, all installed languages will be assumed.
  */
-function tableau_worldserver_integration_set_entity_xliffs($type, $entity, $langs = array()) {
+function entity_xliff_ftp_set_entity_xliffs($type, $entity, $langs = array()) {
   $wrapper = entity_metadata_wrapper($type, $entity);
-  if ($middleware = tableau_worldserver_integration_get_middleware($wrapper)) {
+  if ($middleware = entity_xliff_ftp_get_middleware($wrapper)) {
     $middleware->setXliffs($langs);
   }
 }

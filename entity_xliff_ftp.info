@@ -1,0 +1,7 @@
+name = Entity XLIFF FTP
+description = Enables file-sync based localization workflow in Drupal.
+core = 7.x
+
+dependencies[] = composer_manager
+dependencies[] = date_api
+dependencies[] = entity_xliff
