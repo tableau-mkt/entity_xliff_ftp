@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains the Querier class for querying world server.
+ * Contains the Querier class for querying the remote server.
  */
 
 namespace EntityXliffFtp;
@@ -48,8 +48,8 @@ class Querier {
   }
 
   /**
-   * Returns a list of content that has been translated in WorldServer that is
-   * ready for processing in Drupal.
+   * Returns a list of translated content that is available on the remote server
+   * and ready for processing in Drupal.
    *
    * @param object[] $langs
    *   An associative array of Drupal language objects, keyed by their language

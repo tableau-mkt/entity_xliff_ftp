@@ -152,8 +152,8 @@ class MiddleWare {
   }
 
   /**
-   * Reads translated/processed XLIFF data from Worldserver, unserializes the
-   * data against the wrapped entity, and saves all relevant entities.
+   * Reads translated/processed XLIFF data from the remote server, unserializes
+   * the data against the wrapped entity, and saves all relevant entities.
    *
    * @param object[] $langs
    *   An associative array of Drupal language objects, keyed by their language

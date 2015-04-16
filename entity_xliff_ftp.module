@@ -142,8 +142,8 @@ function entity_xliff_ftp_get_middleware(\EntityDrupalWrapper $wrapper) {
 }
 
 /**
- * Returns a list of content that has been translated in WorldServer that is
- * ready for processing in Drupal.
+ * Returns a list of translated content that is available on the remote server
+ * and ready for processing in Drupal.
  *
  * @param object[] $langs
  *   (optional) An associative array of Drupal language objects, keyed by
@@ -179,7 +179,7 @@ function entity_xliff_ftp_get_processed(array $langs = array()) {
 
 /**
  * Generates XLIFFs for the specified entity in the specified languages, then
- * pushes those files up to WorldServer.
+ * pushes those files up to the remote server.
  *
  * @param string $type
  *   The type of entity.
@@ -200,8 +200,8 @@ function entity_xliff_ftp_put_entity_xliffs($type, $entity, $langs = array()) {
 }
 
 /**
- * Loads translated/processed XLIFF data from Worldserver, unserializes the
- * data against the wrapped entity, and saves all relevant entities.
+ * Loads translated/processed XLIFF data from the remote server, unserializes
+ * the data against the wrapped entity, and saves all relevant entities.
  *
  * @param string $type
  *   The type of entity.

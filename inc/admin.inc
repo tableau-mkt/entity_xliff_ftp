@@ -72,7 +72,7 @@ function entity_xliff_ftp_settings($form, &$form_state) {
 }
 
 /**
- * Drupal settings form callback for WorldServer integration overview page.
+ * Drupal settings form callback for Entity Xliff FTP overview page.
  *
  * @see entity_xliff_ftp_menu()
  */
@@ -288,7 +288,7 @@ function _entity_xliff_ftp_form_entity_xliff_actions_alter(&$form, &$form_state)
   }
 
   // Create a fieldset space for ourselves.
-  $form['worldserver_integration'] = array(
+  $form['entity_xliff_ftp'] = array(
     '#title' => t('Remote file sync integration'),
     '#description' => '<p>' . t('Select languages into which you want to translate this page (defaults to all languages).') . '</p>' .
       '<p>' . t('Once selected, click %import. This will generate XLIFF files for the selected languages and push them to the remote server.', array(
@@ -302,7 +302,7 @@ function _entity_xliff_ftp_form_entity_xliff_actions_alter(&$form, &$form_state)
 
   $languages = language_list('language');
   unset($languages[$GLOBALS['language']->language]);
-  $form['worldserver_integration']['languages'] = array(
+  $form['entity_xliff_ftp']['languages'] = array(
     '#title' => t('Target language(s)'),
     '#type' => 'select',
     '#multiple' => TRUE,
@@ -310,7 +310,7 @@ function _entity_xliff_ftp_form_entity_xliff_actions_alter(&$form, &$form_state)
     '#default_value' => array_keys($languages),
   );
 
-  $form['worldserver_integration']['submit'] = array(
+  $form['entity_xliff_ftp']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Push to remote server'),
     '#submit' => array('entity_xliff_ftp_push_xliffs'),
@@ -318,7 +318,7 @@ function _entity_xliff_ftp_form_entity_xliff_actions_alter(&$form, &$form_state)
 }
 
 /**
- * Submit handler for pushing XLIFFs to WorldServer through the UI.
+ * Submit handler for pushing XLIFFs to the remote server through the UI.
  *
  * @see _entity_xliff_ftp_form_entity_xliff_actions_alter()
  */
@@ -334,7 +334,7 @@ function entity_xliff_ftp_push_xliffs($form, &$form_state) {
     $type = $form_state['build_info']['args'][0];
     $entity = $form_state['build_info']['args'][1];
 
-    // Push selected languages to WorldServer.
+    // Push selected languages to the remote server.
     entity_xliff_ftp_put_entity_xliffs($type, $entity, $langs);
   }
 }
