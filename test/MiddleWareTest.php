@@ -338,7 +338,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     // The t method should be called twice with the expected values.
     $observerDrupal->expects($this->exactly(2))
       ->method('t')
-      ->with($this->equalTo('Problem encountered while processing @language translation for @type %label from WorldServer.'))
+      ->with($this->equalTo('Problem encountered while processing @language translation for @type %label from the remote server.'))
       ->willReturn($expectedMessage);
 
     // The setMessage method should be called twice with the expected values.
@@ -378,7 +378,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     // The t method should be called twice with the expected values.
     $observerDrupal->expects($this->exactly(2))
       ->method('t')
-      ->with($this->equalTo('Successfully processed @language translation for @type %label from WorldServer.'))
+      ->with($this->equalTo('Successfully processed @language translation for @type %label from the remote server.'))
       ->willReturn($expectedMessage);
 
     // The setMessage method should be called twice with the expected values.
