@@ -26,15 +26,24 @@ GitHub.
    to all roles appropriate for your site and use-case.
 1. Configure FTP credentials at `/admin/config/services/entity-xliff-ftp`.
 1. On the same page, configure the "target root path" and the "source root path"
-   1. The "target root path" is the path on the remote FTP server where files
+   1. The __target root path__ is the path on the remote FTP server where files
       will be pushed from Drupal. Within this folder, XLIFF files will be pushed
       into sub-folders whose naming convention is like so: `en-US_to_de-DE`,
       where `de-DE` is the target language.
-   1. The "source root path" is the path on the remote FTP server where this
+   1. The __source root path__ is the path on the remote FTP server where this
       module will assume processed or translated XLIFFs are placed. On cron, or
       when manually triggered through the UI, this module will search this root
       within sub-folders whose naming convention is like so: `de-DE`, where
       `de-DE` is the target language.
+
+#### For example
+![ftp-structure](https://cloud.githubusercontent.com/assets/3496491/7192429/6255ec14-e44a-11e4-991b-c2083adfaa1c.png)
+
+A remote server set up with a folder structure above would yield the following
+configurations:
+
+- __Target root path__: `Clients/Marketing/Drupal/target`
+- __Source root path__: `Clients/Marketing/Drupal/source`
 
 ## Usage
 
@@ -43,6 +52,8 @@ Entity XLIFF, a dependency of this module, creates an "XLIFF" local task on all
 entities that are known to be translatable (for example at `/node/1/xliff`). By
 default, XLIFF files can be downloaded or uploaded individually for each
 language.
+
+![entity-xliff-ui](https://cloud.githubusercontent.com/assets/3496491/7192582/ca2c6de4-e44b-11e4-8040-90d04703d8c2.png)
 
 This module adds a fieldset to this page called "Remote file sync integration,"
 which shows a select list of target languages. Choose the languages you would
@@ -56,6 +67,8 @@ number of entities simultaneously.
 #### Pulling translated content from the remote server
 This module exposes a simple admin UI that exposes "pending" and "processed"
 XLIFFs, located at `/admin/config/regional/translate/entity-xliff-ftp`.
+
+![remote-file-sync-ui](https://cloud.githubusercontent.com/assets/3496491/7192737/1c6875fc-e44d-11e4-9991-696db3589a5b.png)
 
 __Pending projects__ are sets of XLIFFs representing an entity that are ready on
 the remote server, but have not yet been pulled into Drupal (meaning, the
