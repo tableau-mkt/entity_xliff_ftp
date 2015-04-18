@@ -76,9 +76,7 @@ class Querier {
     // Iterate through all languages, list files, and format response.
     $response = array();
     foreach ($langs as $targetLang => $lang) {
-      $langPath = substr($lang->prefix, 0, -2) . strtoupper(substr($lang->prefix, -2, 2 ));
-
-      foreach ($this->client->rawlist($baseDir . '/' . $langPath) as $file => $attrs) {
+      foreach ($this->client->rawlist($baseDir . '/' . $lang->language) as $file => $attrs) {
         // Check for files whose names match the expected format.
         if ($attrs['type'] === 1 && $entity = $this->parseFilename($file)) {
           $response[$targetLang][$entity['type']][$entity['identifier']] = $entity['identifier'];
@@ -139,9 +137,7 @@ class Querier {
     // Iterate through all languages, list files, and format response.
     $response = array();
     foreach ($langs as $targetLang => $lang) {
-      $langPath = substr($lang->prefix, 0, -2) . strtoupper(substr($lang->prefix, -2, 2 ));
-
-      foreach ($this->client->rawlist($baseDir . '/' . $langPath . '/processed') as $file => $attrs) {
+      foreach ($this->client->rawlist($baseDir . '/' . $lang->language . '/processed') as $file => $attrs) {
         // Check that this file whose name matches the expected format.
         if ($attrs['type'] === 1 && $entity = $this->parseFilename($file)) {
           $response[$targetLang][$entity['type']][$entity['identifier']] = array(

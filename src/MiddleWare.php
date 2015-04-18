@@ -103,13 +103,12 @@ class MiddleWare {
 
     // Set up invariants.
     $fileName = $this->getFilename();
-    $langPathBase = 'en-US_to_';
+    $langPathBase = 'en_to_';
 
     // Iterate through all languages, generate XLIFF data, and put those files.
     foreach ($langs as $targetLang => $lang) {
       // Calculate the language path.
-      $langPathSuffix = substr($lang->prefix, 0, -2) . strtoupper(substr($lang->prefix, -2, 2 ));
-      $langPath = $langPathBase . $langPathSuffix;
+      $langPath = $langPathBase . $lang->language;
 
       $xlf = $this->getXliff($targetLang);
       if ($this->putXliff($xlf, $langPath, $fileName)) {
@@ -130,7 +129,7 @@ class MiddleWare {
    *
    * @param string $languagePath
    *   The language path-part, used as a sub-directory underneath the configured
-   *   target directory (e.g. en-US_to_de-DE).
+   *   target directory (e.g. en_to_de).
    *
    * @param string $fileName
    *   The file name to use when writing the file.
@@ -279,9 +278,7 @@ class MiddleWare {
   public function getLanguagePathPartTarget($language) {
     $languages = $this->drupal->languageList('language');
     $language = $languages[$language];
-    $prefix = $language->prefix;
-    $langPathSuffix = substr($prefix, 0, -2) . strtoupper(substr($prefix, -2, 2 ));
-    return 'en-US_to_' . $langPathSuffix;
+    return 'en_to_' . $language->language;
   }
 
   /**
@@ -290,8 +287,7 @@ class MiddleWare {
   public function getLanguagePathPartSource($language) {
     $languages = $this->drupal->languageList('language');
     $language = $languages[$language];
-    $prefix = $language->prefix;
-    return substr($prefix, 0, -2) . strtoupper(substr($prefix, -2, 2 ));
+    return $language->language;
   }
 
 }
