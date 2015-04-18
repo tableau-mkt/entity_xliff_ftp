@@ -117,8 +117,8 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     $observerClient->expects($this->exactly(count($languageList)))
       ->method('rawList')
       ->withConsecutive(
-        array($this->equalTo($expectedSourceRoot . '/fr-FR')),
-        array($this->equalTo($expectedSourceRoot . '/de-DE'))
+        array($this->equalTo($expectedSourceRoot . '/fr')),
+        array($this->equalTo($expectedSourceRoot . '/de'))
       )
       ->willReturn($expectedFileList);
 
@@ -270,8 +270,8 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     $observerClient->expects($this->exactly(count($languageList)))
       ->method('rawList')
       ->withConsecutive(
-        array($this->equalTo($expectedSourceRoot . '/fr-FR/processed')),
-        array($this->equalTo($expectedSourceRoot . '/de-DE/processed'))
+        array($this->equalTo($expectedSourceRoot . '/fr/processed')),
+        array($this->equalTo($expectedSourceRoot . '/de/processed'))
       )
       ->willReturn($expectedFileList);
 
@@ -406,8 +406,8 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
    */
   protected function getValidLangObjects() {
     return array(
-      'fr' => (object) array('prefix' => 'fr-fr', 'name' => 'French'),
-      'de' => (object) array('prefix' => 'de-de', 'name' => 'German'),
+      'fr' => (object) array('language' => 'fr', 'name' => 'French'),
+      'de' => (object) array('language' => 'de', 'name' => 'German'),
     );
   }
 

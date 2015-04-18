@@ -80,7 +80,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
    */
   public function putXliffsGetsAndPutsXliffData() {
     $expectedXlfData = '<xml></xml>';
-    $expectedLangPathBase = 'en-US_to_';
+    $expectedLangPathBase = 'en_to_';
     $expectedFilename = 'file.xlf';
 
     $mockWrapper = $this->getWrapperMock();
@@ -106,8 +106,8 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockMiddleWare->expects($this->exactly(2))
       ->method('putXliff')
       ->withConsecutive(
-        array($expectedXlfData, $expectedLangPathBase . 'fr-FR', $expectedFilename),
-        array($expectedXlfData, $expectedLangPathBase . 'de-DE', $expectedFilename)
+        array($expectedXlfData, $expectedLangPathBase . 'fr', $expectedFilename),
+        array($expectedXlfData, $expectedLangPathBase . 'de', $expectedFilename)
       )
       ->willReturn(FALSE);
 
@@ -828,8 +828,8 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
    */
   protected function getValidLangObjects() {
     return array(
-      'fr' => (object) array('prefix' => 'fr-fr', 'name' => 'French'),
-      'de' => (object) array('prefix' => 'de-de', 'name' => 'German'),
+      'fr' => (object) array('language' => 'fr', 'name' => 'French'),
+      'de' => (object) array('language' => 'de', 'name' => 'German'),
     );
   }
 
@@ -846,8 +846,8 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
    */
   public function languagePrefixPathPartProvider() {
     return array(
-      array('fr', array('fr' => (object) array('prefix' => 'fr-fr')), array('source' => 'fr-FR', 'target' => 'en-US_to_fr-FR')),
-      array('de', array('de' => (object) array('prefix' => 'de-de')), array('source' => 'de-DE', 'target' => 'en-US_to_de-DE'))
+      array('fr', array('fr' => (object) array('language' => 'fr')), array('source' => 'fr', 'target' => 'en_to_fr')),
+      array('de', array('de' => (object) array('language' => 'de')), array('source' => 'de', 'target' => 'en_to_de'))
     );
   }
 
