@@ -28,16 +28,18 @@ GitHub.
 1. On the same page, configure the "target root path" and the "source root path"
    1. The __target root path__ is the path on the remote FTP server where files
       will be pushed from Drupal. Within this folder, XLIFF files will be pushed
-      into sub-folders whose naming convention is like so: `en-US_to_de-DE`,
-      where `de-DE` is the target language.
+      into sub-folders whose naming convention is like so: `en_to_de`,
+      where `en` is the source language and `de` is the target language. Both
+      are the language codes associated with the language in Drupal.
    1. The __source root path__ is the path on the remote FTP server where this
       module will assume processed or translated XLIFFs are placed. On cron, or
       when manually triggered through the UI, this module will search this root
-      within sub-folders whose naming convention is like so: `de-DE`, where
-      `de-DE` is the target language.
+      within sub-folders whose naming convention is like so: `de`, where
+      `de` is the target language, also the language code associated with the
+      language in Drupal.
 
 #### For example
-![ftp-structure](https://cloud.githubusercontent.com/assets/3496491/7192429/6255ec14-e44a-11e4-991b-c2083adfaa1c.png)
+![remote-ftp-structure](https://cloud.githubusercontent.com/assets/3496491/7213577/80b8852e-e538-11e4-8cf0-ea9aab33d75c.png)
 
 A remote server set up with a folder structure above would yield the following
 configurations:
