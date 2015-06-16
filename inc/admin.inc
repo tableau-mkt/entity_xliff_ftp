@@ -84,11 +84,21 @@ function entity_xliff_ftp_overview($form, &$form_state) {
     foreach ($form_state['input']['processable'] as $entityType => $entities) {
       foreach ($entities as $entityId => $shouldBeProcessed) {
         if ($shouldBeProcessed) {
+          try {
+            $wrapper = entity_metadata_wrapper($entityType, $entityId);
+          }
+          catch (EntityMetadataWrapperException $e) {
+            watchdog('entity xliff ftp', 'Error attempting to display %entity %entity_id in the projects process confirmation form.', array(
+              '%entity' => $entityType,
+              '%entity_id' => $entityId,
+            ), WATCHDOG_ERROR);
+            continue;
+          }
+
           $langs = $form_state['storage']['processable'][$entityType][$entityId];
           $langs = array_map(function($item) use ($languages) {
             return $languages[$item]->name;
           }, $langs);
-          $wrapper = entity_metadata_wrapper($entityType, $entityId);
           $toBeProceessed[] = t('Updates: !count to %label (!langs).', array(
             '!count' => count($langs),
             '%label' => $wrapper->label(),
@@ -143,26 +153,36 @@ function entity_xliff_ftp_overview($form, &$form_state) {
   $rows = array();
   foreach ($form_state['storage']['processable'] as $entityType => $entityDetails) {
     foreach ($entityDetails as $entityId => $langs) {
-      $entity = entity_load_single($entityType, (int) $entityId);
-      $wrapper = entity_metadata_wrapper($entityType, $entity);
-      $uri = entity_uri($entityType, $entity);
-      $langs = array_map(function($item) use ($languages) {
-        return $languages[$item]->name;
-      }, $langs);
+      if ($entity = entity_load_single($entityType, (int) $entityId)) {
+        $wrapper = entity_metadata_wrapper($entityType, $entity);
+        $uri = entity_uri($entityType, $entity);
+        $langs = array_map(function ($item) use ($languages) {
+          return $languages[$item]->name;
+        }, $langs);
 
-      $checkbox = array(
-        '#type' => 'checkbox',
-        '#name' => 'processable[' . implode('][', array($entityType, $entityId)) . ']',
-      );
+        $checkbox = array(
+          '#type' => 'checkbox',
+          '#name' => 'processable[' . implode('][', array(
+              $entityType,
+              $entityId
+            )) . ']',
+        );
 
-      $rows[] = array(
-        'checkbox' => drupal_render($checkbox),
-        'label' => l($wrapper->label(), $uri['path'], $uri['options']),
-        'type' => $wrapper->type(),
-        'bundle' => $wrapper->getBundle(),
-        'identifier' => $entityId,
-        'languages' => implode(', ', $langs),
-      );
+        $rows[] = array(
+          'checkbox' => drupal_render($checkbox),
+          'label' => l($wrapper->label(), $uri['path'], $uri['options']),
+          'type' => $wrapper->type(),
+          'bundle' => $wrapper->getBundle(),
+          'identifier' => $entityId,
+          'languages' => implode(', ', $langs),
+        );
+      }
+      else {
+        watchdog('entity xliff ftp', 'Error attempting to display %entity %entity_id in the pending projects overview pane.', array(
+          '%entity' => $entityType,
+          '%entity_id' => $entityId,
+        ), WATCHDOG_WARNING);
+      }
     }
   }
 
@@ -215,16 +235,23 @@ function entity_xliff_ftp_overview($form, &$form_state) {
   foreach ($form_state['storage']['processed'] as $entityType => $entityDetails) {
     foreach ($entityDetails as $entityId => $languageDetails) {
       foreach ($languageDetails as $language => $fileDetails) {
-        $entity = entity_load_single($entityType, $entityId);
-        $wrapper = entity_metadata_wrapper($entityType, $entity);
-        $uri = entity_uri($entityType, $entity);
-        $processed = new DateObject($fileDetails['accessed']);
+        if ($entity = entity_load_single($entityType, $entityId)) {
+          $wrapper = entity_metadata_wrapper($entityType, $entity);
+          $uri = entity_uri($entityType, $entity);
+          $processed = new DateObject($fileDetails['accessed']);
 
-        $rows[$fileDetails['accessed'] . '-' . $wrapper->label()] = array(
-          'label' => l($wrapper->label(), $uri['path'], $uri['options']),
-          'language' => $languages[$language]->name,
-          'processed' => date_format_date($processed),
-        );
+          $rows[$fileDetails['accessed'] . '-' . $wrapper->label()] = array(
+            'label' => l($wrapper->label(), $uri['path'], $uri['options']),
+            'language' => $languages[$language]->name,
+            'processed' => date_format_date($processed),
+          );
+        }
+        else {
+          watchdog('entity xliff ftp', 'Error attempting to display %entity %entity_id in the processed projects overview pane.', array(
+            '%entity' => $entityType,
+            '%entity_id' => $entityId,
+          ), WATCHDOG_WARNING);
+        }
       }
     }
   }
