@@ -43,7 +43,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->willReturn(array('en' => (object) array()));
 
     // Instantiate MiddleWare and invoke MiddleWare::putXliffs()
-    $middleWare = new MiddleWare($mockClient, $mockWrapper, NULL, $observerDrupal);
+    $middleWare = new MiddleWare($mockClient, $mockWrapper, $observerDrupal);
     $middleWare->putXliffs();
   }
 
@@ -142,7 +142,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     // Build a mock double for MiddleWare (to inject observers on itself).
     $mockMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setMethods(array('getXliff', 'putXliff', 'getFilename'))
-      ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $observerDrupal))
+      ->setConstructorArgs(array($mockClient, $mockWrapper, $observerDrupal))
       ->getMock();
 
     // Force MiddleWare::putXliff to return TRUE so setMessage is called.
@@ -196,7 +196,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->with($this->equalTo($translatedMessage), $this->equalTo('error'));
 
     // Instantiate MiddleWare and invoke MiddleWare::putXliff().
-    $middleware = new MiddleWare($observerClient, $mockWrapper, NULL, $observerDrupal);
+    $middleware = new MiddleWare($observerClient, $mockWrapper, $observerDrupal);
     $this->assertSame($expectedResponse, $middleware->putXliff(NULL, NULL, NULL));
   }
 
@@ -233,7 +233,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->willReturn($expectedResponse);
 
     // Instantiate MiddleWare and invoke MiddleWare::putXliff().
-    $middleware = new MiddleWare($observerClient, $mockWrapper, NULL, $observerDrupal);
+    $middleware = new MiddleWare($observerClient, $mockWrapper, $observerDrupal);
     $this->assertSame($expectedResponse, $middleware->putXliff($expectedXlfData, $expectedLangPath, $expectedFilename));
   }
 
@@ -258,7 +258,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->willReturn(array('en' => (object) array()));
 
     // Instantiate MiddleWare and invoke MiddleWare::setXliffs()
-    $middleWare = new MiddleWare($mockClient, $mockWrapper, NULL, $observerDrupal);
+    $middleWare = new MiddleWare($mockClient, $mockWrapper, $observerDrupal);
     $middleWare->setXliffs();
   }
 
@@ -300,7 +300,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
     $mockMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setMethods(array('getProcessedXliff', 'setXliff'))
-      ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $mockDrupal))
+      ->setConstructorArgs(array($mockClient, $mockWrapper, $mockDrupal))
       ->getMock();
 
     // The getProcessedXliff method should be called with 'fr' and 'de' in that order.
@@ -349,7 +349,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     // Build a mock double for MiddleWare (to inject observers on itself).
     $mockMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setMethods(array('getProcessedXliff', 'setXliff'))
-      ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $observerDrupal))
+      ->setConstructorArgs(array($mockClient, $mockWrapper, $observerDrupal))
       ->getMock();
 
     // Force MiddleWare::setXliff to return TRUE so setMessage is called.
@@ -389,7 +389,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     // Build a mock double for MiddleWare (to inject observers on itself).
     $mockMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
       ->setMethods(array('getProcessedXliff', 'setXliff'))
-      ->setConstructorArgs(array($mockClient, $mockWrapper, NULL, $observerDrupal))
+      ->setConstructorArgs(array($mockClient, $mockWrapper, $observerDrupal))
       ->getMock();
 
     // Force MiddleWare::setXliff to return TRUE so setMessage is called.
@@ -412,19 +412,14 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $mockWrapper = $this->getWrapperMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('entityXliffGetTranslatable'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('entityXliffSetXliff'));
     $observerDrupal->expects($this->once())
-      ->method('entityXliffGetTranslatable')
-      ->with($this->identicalTo($mockWrapper))
-      ->willReturn(FALSE);
-
-    // Set up an observer on the serializer.
-    $observerSerializer = $this->getMock('EggsCereal\Serializer', array('unserialize'));
-    $observerSerializer->expects($this->never())
-      ->method('unserialize');
+      ->method('entityXliffSetXliff')
+      ->with($this->equalTo($mockWrapper), $this->equalTo(NULL), $this->equalTo(NULL))
+      ->willReturn(array());
 
     // Instantiate a MiddleWare instance and call setXliff().
-    $middleware = new MiddleWare($mockClient, $mockWrapper, $observerSerializer, $observerDrupal);
+    $middleware = new MiddleWare($mockClient, $mockWrapper, $observerDrupal);
     $this->assertSame(FALSE, $middleware->setXliff(NULL, NULL));
   }
 
@@ -437,29 +432,19 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   public function setXliffUnserializationFailure() {
     $expectedLang = 'ja';
     $expectedXlfData = '<xml></xml>';
-    $expectedTranslatable = $this->getMockBuilder('EggsCereal\Interfaces\TranslatableInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
 
     $mockClient = $this->getConnectedClientMock();
     $mockWrapper = $this->getWrapperMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('entityXliffGetTranslatable'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('entityXliffSetXliff'));
     $observerDrupal->expects($this->once())
-      ->method('entityXliffGetTranslatable')
-      ->with($this->identicalTo($mockWrapper))
-      ->willReturn($expectedTranslatable);
-
-    // Set up an observer on the serializer.
-    $observerSerializer = $this->getMock('EggsCereal\Serializer', array('unserialize'));
-    $observerSerializer->expects($this->once())
-      ->method('unserialize')
-      ->with($this->equalTo($expectedTranslatable), $this->equalTo($expectedLang), $this->equalTo($expectedXlfData))
-      ->willReturn(FALSE);
+      ->method('entityXliffSetXliff')
+      ->with($this->equalTo($mockWrapper), $this->equalTo($expectedLang), $this->equalTo($expectedXlfData))
+      ->willReturn(array());
 
     // Instantiate a MiddleWare instance and call setXliff().
-    $middleware = new MiddleWare($mockClient, $mockWrapper, $observerSerializer, $observerDrupal);
+    $middleware = new MiddleWare($mockClient, $mockWrapper, $observerDrupal);
     $this->assertSame(FALSE, $middleware->setXliff($expectedXlfData, $expectedLang));
   }
 
@@ -473,30 +458,20 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     $expectedLang = 'ja';
     $expectedXlfData = '<xml></xml>';
     $expectedResponse = TRUE;
-    $expectedTranslatable = $this->getMockBuilder('EggsCereal\Interfaces\TranslatableInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
 
     $mockClient = $this->getConnectedClientMock();
     $mockWrapper = $this->getWrapperMock();
 
     // Create an observer double for the DrupalHandler.
-    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('entityXliffGetTranslatable'));
+    $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler', array('entityXliffSetXliff'));
     $observerDrupal->expects($this->once())
-      ->method('entityXliffGetTranslatable')
-      ->with($this->identicalTo($mockWrapper))
-      ->willReturn($expectedTranslatable);
-
-    // Set up an observer on the serializer.
-    $observerSerializer = $this->getMock('EggsCereal\Serializer', array('unserialize'));
-    $observerSerializer->expects($this->once())
-      ->method('unserialize')
-      ->with($this->equalTo($expectedTranslatable), $this->equalTo($expectedLang), $this->equalTo($expectedXlfData))
+      ->method('entityXliffSetXliff')
+      ->with($this->equalTo($mockWrapper), $this->equalTo($expectedLang), $this->equalTo($expectedXlfData))
       ->willReturn(TRUE);
 
     // Set up an observer middleware instance.
     $observerMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
-      ->setConstructorArgs(array($mockClient, $mockWrapper, $observerSerializer, $observerDrupal))
+      ->setConstructorArgs(array($mockClient, $mockWrapper, $observerDrupal))
       ->setMethods(array('setProcessed'))
       ->getMock();
     $observerMiddleWare->expects($this->once())
@@ -550,7 +525,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->with($this->equalTo($translatedMessage), $this->equalTo('error'));
 
     // Instantiate MiddleWare and invoke MiddleWare::putXliff().
-    $middleware = new MiddleWare($observerClient, $mockWrapper, NULL, $observerDrupal);
+    $middleware = new MiddleWare($observerClient, $mockWrapper, $observerDrupal);
     $this->assertSame($expectedResponse, $middleware->getProcessedXliff(NULL));
   }
 
@@ -587,7 +562,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->willReturn($expectedResponse);
 
     $observerMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
-      ->setConstructorArgs(array($observerClient, $mockWrapper, NULL, $observerDrupal))
+      ->setConstructorArgs(array($observerClient, $mockWrapper, $observerDrupal))
       ->setMethods(array('getLanguagePathPartSource', 'getFilename'))
       ->getMock();
 
@@ -647,7 +622,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
 
     // Create an observer double for our MiddleWare class.
     $observerMiddleWare = $this->getMockBuilder('EntityXliffFtp\MiddleWare')
-      ->setConstructorArgs(array($observerClient, $mockWrapper, NULL, $observerDrupal))
+      ->setConstructorArgs(array($observerClient, $mockWrapper, $observerDrupal))
       ->setMethods(array('getLanguagePathPartSource', 'getFilename'))
       ->getMock();
 
@@ -667,39 +642,28 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Tests that MiddleWare::getXliff runs Serializer::serialize with a
-   * Translatable based on the encapsulated Entity wrapper for the given
-   * target language.
+   * Tests that MiddleWare::getXliff calls out to the Entity XLIFF API in the
+   * expected way and returns that data directly.
    *
    * @test
    */
   public function getXliff() {
     $expectedLang = 'fr-fr';
-    $expectedTranslatable = $this->getMock('EggsCereal\Interfaces\TranslatableInterface');
+    $expectedXliff = '<xml></xml>';
     $mockClient = $this->getConnectedClientMock();
     $mockWrapper = $this->getWrapperMock(array('raw', 'getIdentifier', 'getPropertyInfo', 'type'));
-
-    // Set up an observer on the serializer.
-    $observerSerializer = $this->getMockBuilder('EggsCereal\Serializer')
-      ->setMethods(array('serialize'))
-      ->getMock();
 
     // Set up an observer on the DrupalHandler.
     $observerDrupal = $this->getMock('EntityXliffFtp\Utils\DrupalHandler');
 
     // We expect the entityXliffGetTranslatable method to be called.
     $observerDrupal->expects($this->once())
-      ->method('entityXliffGetTranslatable')
-      ->with($this->equalTo($mockWrapper))
-      ->willReturn($expectedTranslatable);
+      ->method('entityXliffGetXliff')
+      ->with($this->equalTo($mockWrapper), $this->equalTo($expectedLang))
+      ->willReturn($expectedXliff);
 
-    // We expect the Serializer::serialize method to be called.
-    $observerSerializer->expects($this->once())
-      ->method('serialize')
-      ->with($this->equalTo($expectedTranslatable), $this->equalTo($expectedLang));
-
-    $middleware = new MiddleWare($mockClient, $mockWrapper, $observerSerializer, $observerDrupal);
-    $middleware->getXliff($expectedLang);
+    $middleware = new MiddleWare($mockClient, $mockWrapper, $observerDrupal);
+    $this->assertEquals($expectedXliff, $middleware->getXliff($expectedLang));
   }
 
   /**
@@ -736,7 +700,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->willReturn($expectedPrefix);
 
     // Instantiate MiddleWare and run MiddleWare::getFilename().
-    $middleware = new MiddleWare($mockClient, $observerWrapper, NULL, $observerDrupal);
+    $middleware = new MiddleWare($mockClient, $observerWrapper, $observerDrupal);
     $this->assertEquals($expectedFilename, $middleware->getFilename());
   }
 
@@ -761,7 +725,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->willReturn($response);
 
     // Instantiate MiddleWare and call getLanguagePathPartSource().
-    $middleware = new MiddleWare($mockClient, $mockWrapper, NULL, $observerDrupal);
+    $middleware = new MiddleWare($mockClient, $mockWrapper, $observerDrupal);
     $this->assertEquals($expectedPathPart['target'], $middleware->getLanguagePathPartTarget($language));
   }
 
@@ -786,7 +750,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
       ->willReturn($response);
 
     // Instantiate MiddleWare and call getLanguagePathPartSource().
-    $middleware = new MiddleWare($mockClient, $mockWrapper, NULL, $observerDrupal);
+    $middleware = new MiddleWare($mockClient, $mockWrapper, $observerDrupal);
     $this->assertEquals($expectedPathPart['source'], $middleware->getLanguagePathPartSource($language));
   }
 

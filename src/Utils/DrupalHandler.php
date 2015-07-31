@@ -12,12 +12,26 @@ namespace EntityXliffFtp\Utils;
 class DrupalHandler {
 
   /**
-   * Gets a TranslatableInterface instance given an entity wrapper.
+   * Returns XLIFF representing the provided entity wrapper.
    * @param \EntityDrupalWrapper $wrapper
-   * @return \EggsCereal\Interfaces\TranslatableInterface|null
+   * @param string $targetLanguage
+   * @return string
    */
-  public function entityXliffGetTranslatable($wrapper) {
-    return entity_xliff_get_translatable($wrapper);
+  public function entityXliffGetXliff($wrapper, $targetLanguage) {
+    return entity_xliff_get_xliff($wrapper, $targetLanguage);
+  }
+
+  /**
+   * Sets the provided XLIFF against the given wrapped entity in the specified
+   * target language.
+   * @param \EntityDrupalWrapper $wrapper
+   * @param string $targetLanguage
+   * @param string $xliff
+   * @param bool $save
+   * @return array
+   */
+  public function entityXliffSetXliff($wrapper, $targetLanguage, $xliff, $save = TRUE) {
+    return entity_xliff_set_xliff($wrapper, $targetLanguage, $xliff, $save);
   }
 
   /**

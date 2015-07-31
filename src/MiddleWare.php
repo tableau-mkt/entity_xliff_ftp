@@ -7,7 +7,6 @@
 
 namespace EntityXliffFtp;
 
-use EggsCereal\Serializer;
 use EntityXliffFtp\Utils\DrupalHandler;
 
 
@@ -22,11 +21,6 @@ class MiddleWare {
    * @var \EntityDrupalWrapper
    */
   protected $wrapper;
-
-  /**
-   * @var Serializer
-   */
-  protected $serializer;
 
   /**
    * @var DrupalHandler
@@ -61,7 +55,7 @@ class MiddleWare {
    *
    * @throws \Exception
    */
-  public function __construct(\Net_SFTP $client, \EntityDrupalWrapper $wrapper, Serializer $serializer = NULL, DrupalHandler $handler = NULL) {
+  public function __construct(\Net_SFTP $client, \EntityDrupalWrapper $wrapper, DrupalHandler $handler = NULL) {
     // Make sure the SFTP client is connected.
     if (!$client->isConnected()) {
       throw new \Exception('The provided SFTP client must already be connected.');
@@ -72,14 +66,8 @@ class MiddleWare {
       $handler = new DrupalHandler();
     }
 
-    // If no Serializer was provided, instantiate a new one.
-    if ($serializer === NULL) {
-      $serializer = new Serializer();
-    }
-
     $this->client = $client;
     $this->wrapper = $wrapper;
-    $this->serializer = $serializer;
     $this->drupal = $handler;
   }
 
@@ -200,10 +188,8 @@ class MiddleWare {
    *   TRUE on success, false on failure.
    */
   public function setXliff($xlfData, $targetLang) {
-    if ($translatable = $this->drupal->entityXliffGetTranslatable($this->wrapper)) {
-      if ($this->serializer->unserialize($translatable, $targetLang, $xlfData)) {
-        return $this->setProcessed($targetLang);
-      }
+    if ($this->drupal->entityXliffSetXliff($this->wrapper, $targetLang, $xlfData)) {
+      return $this->setProcessed($targetLang);
     }
     return FALSE;
   }
@@ -253,8 +239,7 @@ class MiddleWare {
    *   XLIFF representing the given Entity wrapper.
    */
   public function getXliff($targetLang) {
-    $translatable = $this->drupal->entityXliffGetTranslatable($this->wrapper);
-    return $this->serializer->serialize($translatable, $targetLang);
+    return $this->drupal->entityXliffGetXliff($this->wrapper, $targetLang);
   }
 
   /**
