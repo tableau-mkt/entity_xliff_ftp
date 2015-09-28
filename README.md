@@ -81,11 +81,33 @@ This module knows which XLIFFs have already been imported because it moves
 imported files on the remote server from the configured "source root path" to
 a sub-directory called "processed."
 
-This module will automatically check for pending projects on the remote server
-and import them on cron. If you're actively working on a project or need to
-import a project immediately, you can select pending projects in the
-aforementioned admin UI and click the "process selected projects" button to run
-a manual import.
+If you're actively working on a project or need to import a project immediately,
+you can select pending projects in the aforementioned admin UI and click the
+"process selected projects" button to run a manual import.
+
+##### Automation
+This module also provides two methods to automate syncing/importing processed
+XLIFF files from the remote server to Drupal.
+
+__On cron__: By default, this module will attempt to pull all available XLIFFs
+from the remote server on cron. If you wish to control how often this task is
+run, independent of how often you run your Drupal cron task, use a module like
+[Elysia Cron][].
+
+__Web service call__: For more advanced workflows, this module opens up a web
+service endpoint that can be hit remotely in order to trigger, on an ad-hoc
+basis, the same process that's triggered on cron. For example, in your
+translation management system, you could add a workflow action to the end of a
+process that pings this web service endpoint, immediately pulling in content to
+Drupal. Endpoint details follow:
+
+`POST /sync-xliffs-from-remote?key=[cron_key]`
+
+Responses:
+- `200 OK`: Processing occurred without issue.
+- `403 Forbidden`: Either no `key` was provided, or the key provided is invalid.
+- `405 Method Not Allowed`: The request used an unsupported method. Use POST.
+- `500 Internal Server Error`: An error occurred while processing XLIFFs.
 
 ## Please note
 This module and its underlying dependencies are still under active development.
@@ -94,3 +116,4 @@ Use at your own risk with the intention of finding and filing bugs.
 [SDL WorldServer]: http://www.sdl.com/cxc/language/translation-management/worldserver/
 [Composer Manager]: https://www.drupal.org/project/composer_manager
 [installing and using Composer Manager]: https://github.com/cpliakas/composer-manager-docs/blob/master/README.md#installation
+[Elysia Cron]: https://www.drupal.org/project/elysia_cron
