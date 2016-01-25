@@ -4,5 +4,6 @@ core = 7.x
 configure = admin/config/services/entity-xliff-ftp
 
 dependencies[] = composer_manager
+dependencies[] = date
 dependencies[] = date_api
 dependencies[] = entity_xliff
