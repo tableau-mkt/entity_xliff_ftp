@@ -198,10 +198,26 @@ function entity_xliff_ftp_set_entity_xliffs($type, $entity, $langs = array()) {
  *   returned.
  */
 function entity_xliff_ftp_process_all() {
+  return entity_xliff_ftp_process_given(entity_xliff_ftp_get_processable());
+}
+
+/**
+ * Sync a given list processable XLIFFs from the remote server to Drupal.
+ *
+ * @param array $processable
+ *   An array of processables, keyed by entity type.
+ *
+ * @return array
+ *   Returns an associative array of entities processed; the key represents the
+ *   entity type and entity ID, separated by a dash. The value is an array of
+ *   languages processed. If no entities were processed, an empty array will be
+ *   returned.
+ */
+function entity_xliff_ftp_process_given($processable) {
   $entitiesProcessed = array();
   $xliffsProcessed = 0;
 
-  if ($processable = entity_xliff_ftp_get_processable()) {
+  if ($processable) {
     $languages = language_list();
     foreach ($processable as $entityType => $entities) {
       foreach ($entities as $entityId => $langs) {

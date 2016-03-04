@@ -103,8 +103,31 @@ Drupal. Endpoint details follow:
 
 `POST /sync-xliffs-from-remote?key=[cron_key]`
 
+A request body can be sent conditionally to process only a subset of entities
+and languages that are available on the remote server. It takes the following
+form:
+
+```json
+[{
+    "entityType": "node",
+    "entityId": 123,
+    "languages": [
+        "zh-cn",
+        "de",
+        "ja"
+    ]
+}, {
+    "entityType": "taxonomy_term",
+    "entityId": 456,
+    "languages": [
+        "es"
+    ]
+}]
+```
+
 Responses:
 - `200 OK`: Processing occurred without issue.
+- `400 Bad Request`: A request body was provided but formatted incorrectly.
 - `403 Forbidden`: Either no `key` was provided, or the key provided is invalid.
 - `405 Method Not Allowed`: The request used an unsupported method. Use POST.
 - `500 Internal Server Error`: An error occurred while processing XLIFFs.
