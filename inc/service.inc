@@ -13,7 +13,10 @@
 function entity_xliff_ftp_sync_from_remote() {
   // Parse the POST request body. If none is provided, default to an array.
   $request = drupal_json_decode(file_get_contents('php://input'));
-  $request = $request ?: array();
+  $request = ($request ?: array());
+
+  // Allow other modules to alter the remote sync payload.
+  drupal_alter('entity_xliff_ftp_remote_sync', $request);
 
   // Always return JSON.
   $response = array();
