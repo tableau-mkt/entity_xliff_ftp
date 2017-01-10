@@ -3,7 +3,7 @@
     "psr-4": {"EntityXliffFtp\\": "src/"}
   },
   "require": {
-    "phpseclib/phpseclib": "~0.3",
+    "phpseclib/phpseclib": "~2.0.0",
     "tableau-mkt/eggs-n-cereal": "*"
   },
   "require-dev": {

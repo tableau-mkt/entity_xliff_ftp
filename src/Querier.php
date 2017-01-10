@@ -9,6 +9,7 @@ namespace EntityXliffFtp;
 
 
 use EntityXliffFtp\Utils\DrupalHandler;
+use phpseclib\Net\SFTP;
 
 class Querier {
 
@@ -23,7 +24,7 @@ class Querier {
   CONST FILEPREFIXVAR = 'entity_xliff_ftp_file_prefix';
 
   /**
-   * @var \Net_SFTP
+   * @var SFTP;
    */
   protected $client;
 
@@ -32,7 +33,7 @@ class Querier {
    */
   protected $handler;
 
-  public function __construct(\Net_SFTP $client, DrupalHandler $handler = NULL) {
+  public function __construct(SFTP $client, DrupalHandler $handler = NULL) {
     // Make sure the SFTP client is connected.
     if (!$client->isConnected()) {
       throw new \Exception('The provided SFTP client must already be connected.');

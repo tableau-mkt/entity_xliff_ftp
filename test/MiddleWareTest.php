@@ -16,7 +16,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
    */
   public function constructorExpectsConnection() {
     $mockWrapper = $this->getWrapperMock();
-    $mockClient = $this->getMockBuilder('Net_SFTP')
+    $mockClient = $this->getMockBuilder('phpseclib\Net\SFTP')
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -73,7 +73,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Tests that MiddleWare::putXliffs will get XLIFF data and Net_SFTP::put
+   * Tests that MiddleWare::putXliffs will get XLIFF data and SFTP::put
    * that data to the expected location.
    *
    * @test
@@ -201,7 +201,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Tests that MiddleWare::putXliff calls Net_SFTP::put with the values that
+   * Tests that MiddleWare::putXliff calls SFTP::put with the values that
    * the SFTP client expects.
    *
    * @test
@@ -287,7 +287,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Tests that MiddleWare::setXliffs will Net_SFTP::get XLIFF data and run the
+   * Tests that MiddleWare::setXliffs will SFTP::get XLIFF data and run the
    * unserialization process on the returned data.
    *
    * @test
@@ -530,7 +530,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Tests that MiddleWare::getProcessedXliff will Net_SFTP::get the XLIFF file
+   * Tests that MiddleWare::getProcessedXliff will SFTP::get the XLIFF file
    * from the expected location on the FTP server.
    *
    * @test
@@ -582,7 +582,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
   /**
    * Tests that MiddleWare::setProcessed method moves the translated XLIFF file
    * for a given language to the /processed sub-folder in the source folder and
-   * updates the access time via Net_SFTP::touch.
+   * updates the access time via SFTP::touch.
    *
    * @test
    */
@@ -600,13 +600,13 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
     // Create an observer double for the Client.
     $observerClient = $this->getConnectedClientMock();
 
-    // We expect that Net_SFTP::rename will be called exactly once.
+    // We expect that SFTP::rename will be called exactly once.
     $observerClient->expects($this->once())
       ->method('rename')
       ->with($this->equalTo($expectedFrom), $this->equalTo($expectedTo))
       ->willReturn($expectedClientResponse);
 
-    // We expect that Net_SFTP::touch will be called exactly once.
+    // We expect that SFTP::touch will be called exactly once.
     $observerClient->expects($this->once())
       ->method('touch')
       ->with($this->equalTo($expectedFrom));
@@ -759,7 +759,7 @@ class MiddleWareTest extends \PHPUnit_Framework_TestCase {
    * @return \PHPUnit_Framework_MockObject_MockObject
    */
   protected function getConnectedClientMock() {
-    $mockClient = $this->getMockBuilder('Net_SFTP')
+    $mockClient = $this->getMockBuilder('phpseclib\Net\SFTP')
       ->disableOriginalConstructor()
       ->getMock();
     $mockClient->expects($this->any())

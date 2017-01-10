@@ -126,8 +126,8 @@ function entity_xliff_ftp_form_entity_xliff_actions_alter(&$form, &$form_state) 
 /**
  * Returns an authenticated phpseclib SFTP client or NULL on failure.
  *
- * @return Net_SFTP|null
- *   An authenticated Net_SFTP instance or NULL on failure.
+ * @return \phpseclib\Net\SFTP|null
+ *   An authenticated SFTP instance or NULL on failure.
  */
 function entity_xliff_ftp_sftp_client() {
   $client = &drupal_static(__FUNCTION__, FALSE);
@@ -138,7 +138,7 @@ function entity_xliff_ftp_sftp_client() {
     $pw = variable_get('entity_xliff_ftp_pw', FALSE);
 
     if ($host && $un && $pw) {
-      $client = new Net_SFTP($host);
+      $client = new \phpseclib\Net\SFTP($host);
       if (!$client->login($un, $pw)) {
         $client = NULL;
       }

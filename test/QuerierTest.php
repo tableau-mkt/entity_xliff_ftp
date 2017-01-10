@@ -15,7 +15,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionMessage The provided SFTP client must already be connected.
    */
   public function constructorExpectsConnection() {
-    $mockClient = $this->getMockBuilder('Net_SFTP')
+    $mockClient = $this->getMockBuilder('phpseclib\Net\SFTP')
       ->disableOriginalConstructor()
       ->getMock();
     $querier = new Querier($mockClient);
@@ -69,7 +69,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     $observerDrupal->expects($this->never())
       ->method('languageList');
 
-    // We expect that Net_SFTP::rawList will never be called.
+    // We expect that SFTP::rawList will never be called.
     $observerClient->expects($this->never())
       ->method('rawList');
 
@@ -79,7 +79,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Tests that Querier::getProcessable will Net_SFTP::rawList the expected
+   * Tests that Querier::getProcessable will SFTP::rawList the expected
    * remote path and return results in the expected format.
    *
    * @test
@@ -112,7 +112,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
       ->with($this->equalTo('language'))
       ->willReturn($languageList);
 
-    // We expect that Net_SFTP::rawList will be called as many times as there
+    // We expect that SFTP::rawList will be called as many times as there
     // are languages.
     $observerClient->expects($this->exactly(count($languageList)))
       ->method('rawList')
@@ -202,7 +202,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
     $observerDrupal->expects($this->never())
       ->method('languageList');
 
-    // We expect that Net_SFTP::rawList will never be called.
+    // We expect that SFTP::rawList will never be called.
     $observerClient->expects($this->never())
       ->method('rawList');
 
@@ -212,7 +212,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Tests that Querier::getProcessed will Net_SFTP::rawList the expected
+   * Tests that Querier::getProcessed will SFTP::rawList the expected
    * remote path and return results in the expected format.
    *
    * @test
@@ -265,7 +265,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
       ->with($this->equalTo('language'))
       ->willReturn($languageList);
 
-    // We expect that Net_SFTP::rawList will be called as many times as there
+    // We expect that SFTP::rawList will be called as many times as there
     // are languages.
     $observerClient->expects($this->exactly(count($languageList)))
       ->method('rawList')
@@ -389,7 +389,7 @@ class QuerierTest extends \PHPUnit_Framework_TestCase {
    * @return \PHPUnit_Framework_MockObject_MockObject
    */
   protected function getConnectedClientMock() {
-    $mockClient = $this->getMockBuilder('Net_SFTP')
+    $mockClient = $this->getMockBuilder('phpseclib\Net\SFTP')
       ->disableOriginalConstructor()
       ->getMock();
     $mockClient->expects($this->any())

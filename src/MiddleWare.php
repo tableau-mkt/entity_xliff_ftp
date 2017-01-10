@@ -8,12 +8,13 @@
 namespace EntityXliffFtp;
 
 use EntityXliffFtp\Utils\DrupalHandler;
+use phpseclib\Net\SFTP;
 
 
 class MiddleWare {
 
   /**
-   * @var \Net_SFTP
+   * @var SFTP
    */
   protected $client;
 
@@ -43,7 +44,7 @@ class MiddleWare {
   CONST FILEPREFIXVAR = 'entity_xliff_ftp_file_prefix';
 
   /**
-   * @param \Net_SFTP $client
+   * @param SFTP $client
    *   An SFTP client, already logged in.
    *
    * @param \EntityDrupalWrapper $wrapper
@@ -55,7 +56,7 @@ class MiddleWare {
    *
    * @throws \Exception
    */
-  public function __construct(\Net_SFTP $client, \EntityDrupalWrapper $wrapper, DrupalHandler $handler = NULL) {
+  public function __construct(SFTP $client, \EntityDrupalWrapper $wrapper, DrupalHandler $handler = NULL) {
     // Make sure the SFTP client is connected.
     if (!$client->isConnected()) {
       throw new \Exception('The provided SFTP client must already be connected.');
