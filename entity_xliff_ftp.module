@@ -43,7 +43,6 @@ function entity_xliff_ftp_menu() {
   );
 }
 
-
 /**
  * Implements hook_action_info().
  */
@@ -223,12 +222,19 @@ function entity_xliff_ftp_get_processed(array $langs = array()) {
  * @param object[] $langs
  *   (optional) An associative array of Drupal language objects, keyed by
  *   language. If nothing is provided, all installed languages will be assumed.
+ *
+ * @param string $targetDir
+ *   The SFTP upload directory. If left empty the configured global variable will be used.
+ *
+ * @return boolean
+ * success/failure
  */
-function entity_xliff_ftp_put_entity_xliffs($type, $entity, $langs = array()) {
+function entity_xliff_ftp_put_entity_xliffs($type, $entity, $langs = array(), $targetDir = FALSE) {
   $wrapper = entity_metadata_wrapper($type, $entity);
   if ($middleware = entity_xliff_ftp_get_middleware($wrapper)) {
     // Get the middleware provider and push up configured files.
-    $middleware->putXliffs($langs);
+    // Return success/failure.
+    return $middleware->putXliffs($langs, $targetDir);
   }
 }
 

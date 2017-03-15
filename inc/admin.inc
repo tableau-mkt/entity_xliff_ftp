@@ -310,7 +310,7 @@ function _entity_xliff_ftp_form_entity_xliff_actions_alter(&$form, &$form_state)
   // Do not show this on non-English pages for now. Currently, we only support
   // exporting XLIFFs for English. @todo
   $node = menu_get_object('node');
-  if ($node->language !== 'en' && $node->language !== LANGUAGE_NONE) {
+  if (empty($node) || ($node->language !== 'en' && $node->language !== LANGUAGE_NONE)) {
     return;
   }
 
