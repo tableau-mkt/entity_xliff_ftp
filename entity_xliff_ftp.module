@@ -8,6 +8,8 @@
 use EntityXliffFtp\MiddleWare;
 use EntityXliffFtp\Querier;
 
+// Ensure the submit function in the admin.inc file is available.
+module_load_include('inc', 'entity_xliff_ftp', 'inc/admin');
 
 /**
  * Implements hook_menu().
@@ -118,7 +120,6 @@ function entity_xliff_ftp_cron() {
  * Implements hook_form_FORM_ID_alter().
  */
 function entity_xliff_ftp_form_entity_xliff_actions_alter(&$form, &$form_state) {
-  module_load_include('inc', 'entity_xliff_ftp', 'inc/admin');
   _entity_xliff_ftp_form_entity_xliff_actions_alter($form, $form_state);
 }
 
