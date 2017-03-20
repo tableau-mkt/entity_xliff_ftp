@@ -80,8 +80,15 @@ class MiddleWare {
    * @param object[] $langs
    *   An associative array of Drupal language objects, keyed by their language
    *   shortcode. Should match the output of language_list().
+   *
+   * @param string $targetDir
+   *   The SFTP upload directory. If left empty the configured global variable will be used.
+   *
+   * @return bool
+   *   TRUE on success.
+   *   FALSE if either the put failed or only English was provided as a target languge.
    */
-  public function putXliffs(array $langs = array()) {
+  public function putXliffs(array $langs = array(), $targetDir = FALSE) {
     // If no languages were provided, load them dynamically.
     if ($langs === array()) {
       $langs = $this->drupal->languageList('language');
@@ -94,20 +101,33 @@ class MiddleWare {
     $fileName = $this->getFilename();
     $langPathBase = 'en_to_';
 
+    $return = TRUE;
     // Iterate through all languages, generate XLIFF data, and put those files.
     foreach ($langs as $targetLang => $lang) {
       // Calculate the language path.
       $langPath = $langPathBase . $lang->language;
 
       $xlf = $this->getXliff($targetLang);
-      if ($this->putXliff($xlf, $langPath, $fileName)) {
+      if ($this->putXliff($xlf, $langPath, $fileName, $targetDir)) {
         $this->drupal->setMessage($this->drupal->t('Successfully uploaded @language XLIFF file for @type %label', array(
           '@language' => $lang->name,
           '@type' => $this->wrapper->type(),
           '%label' => $this->wrapper->label(),
         )), 'status');
+        $return &= TRUE;
+      }
+      else {
+        $this->drupal->setMessage($this->drupal->t('Uploaded failed for @language XLIFF file for @type %label', array(
+          '@language' => $lang->name,
+          '@type' => $this->wrapper->type(),
+          '%label' => $this->wrapper->label(),
+        )), 'status');
+        $return &= FALSE;
       }
     }
+    // If English was the only language then return false.
+    $return &= FALSE;
+    return $return;
   }
 
   /**
@@ -123,10 +143,24 @@ class MiddleWare {
    * @param string $fileName
    *   The file name to use when writing the file.
    *
+   * @param string $targetDir
+   *   The SFTP upload directory. If left empty the configured global variable will be used.
+   *
    * @return bool
    *   TRUE on success. FALSE on failure.
    */
-  public function putXliff($xlfData, $languagePath, $fileName) {
+  public function putXliff($xlfData, $languagePath, $fileName, $targetDir = FALSE) {
+
+    // We received a passed in target so ignore the language
+    // and use what we were given directly.
+    if ($targetDir) {
+      $targetFile = implode('/', array($targetDir, $fileName));
+      $result = $this->client->put($targetFile, $xlfData);
+      return $result;
+    }
+
+    // If we got here then we did not get a target
+    // and need to use the variable and the language value.
     if ($targetDir = $this->drupal->variableGet(self::TARGETROOTVAR, FALSE)) {
       $targetFile = implode('/', array($targetDir, $languagePath, $fileName));
       $result = $this->client->put($targetFile, $xlfData);
@@ -201,7 +235,11 @@ class MiddleWare {
   public function getProcessedXliff($language) {
     if ($sourceDir = $this->drupal->variableGet(self::SOURCEROOTVAR, FALSE)) {
       $languagePath = $this->getLanguagePathPartSource($language);
-      $targetFile = implode('/', array($sourceDir, $languagePath, $this->getFilename()));
+      $targetFile = implode('/', array(
+        $sourceDir,
+        $languagePath,
+        $this->getFilename()
+      ));
       $result = $this->client->get($targetFile);
     }
     else {
